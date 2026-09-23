@@ -8,15 +8,16 @@ description: Validate the project knowledge repository structure, core policy fi
 Run:
 
 ```bash
-python scripts/validation/validate_structure.py
-python scripts/evaluate/self_check_base.py
-python -m unittest discover -s tests
+python _base/scripts/validate.py
+python _base/scripts/self_check.py
+python -m unittest discover -s _base/tests
 ```
 
 Then inspect:
 - required root files including `AGENTS.md`, `CLAUDE.md`, and `README.md`;
 - `README.md` front matter `version`/`changelog`, and no version-suffixed files or sections (e.g. `*-v2.md`);
-- `framework/`, `evaluation/`, and `governance/adoption/` base structure;
+- `_base/` (manifest, registry, templates, framework, scripts) and the module folders enabled in `_config/project.yml`;
+- `AGENTS.md` base/project block markers and `base.version` against `_base/manifest.yml`;
 - `_config/` policies;
 - `.claude/skills/` and `.claude/agents/` structure;
 - `data/raw/` separation and manifests;

@@ -1,13 +1,10 @@
 project:
-  code: SAMPLE-001
-  name: Sample Project
-  phase: proposal
+  code: TEMPLATE
+  name: Project Knowledge Template
+  phase: ""
   status: active
   owner: TBD
-
-repository:
-  wiki_root: wiki
-  entity_root: entities
-  data_root: data
-  attachment_root: attachments
-  llm_root: llm
+profile: null
+modules: [core, governance]
+base:
+  role: template   # 템플릿 저장소. 새 프로젝트에서 init_project.py가 project로 바꾸고 version을 기록한다

@@ -77,7 +77,7 @@ Use official Wiki, entities, normalized data, and manifests as the preferred con
 ### 5. Validate before completion
 
 When filesystem access is available:
-- Run `scripts/validate_layout.py <repository-root>` from this Skill for structural checks.
+- Run `python _base/scripts/validate.py` from the repository root for structural and record checks.
 - Run repository-specific validation scripts if present.
 - Report missing required roots or policy violations instead of silently creating conflicting conventions.
 

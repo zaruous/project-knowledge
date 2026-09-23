@@ -1,0 +1,192 @@
+# base manifest: 모듈별 폴더, 프로필별 wiki 단계, 경로 소유권의 단일 원천.
+# init_project.py가 프로필·모듈에 맞게 폴더와 단계 README를 만들고, validate.py가 같은 정의로 검사한다.
+version: 3.0.0-alpha.3          # base 버전. 템플릿 저장소 README front matter의 version과 같아야 한다
+updated_at: 2026-09-23
+template_repository: zaruous/project-knowledge
+
+# 모든 저장소에 있어야 하는 경로
+required:
+  - README.md
+  - AGENTS.md
+  - CLAUDE.md
+  - requirements.txt
+  - _config/project.yml
+  - _base/registry
+  - _base/templates
+  - _base/framework
+  - _base/scripts
+  - .claude/skills
+  - .claude/agents
+  - skills/project-knowledge-manager
+
+# 모듈: 켜면 dirs를 만든다. 레지스트리 유형(types.yml)의 module과 이름이 같다
+modules:
+  core:
+    description: 모든 프로젝트 공통 (결정·조치·이슈·리스크·변경·산출물, 데이터, 관리 문서)
+    dirs:
+      - entities/decisions
+      - entities/actions
+      - entities/issues
+      - entities/risks
+      - entities/change-requests
+      - entities/deliverables
+      - data/incoming
+      - data/raw
+      - data/staging
+      - data/normalized
+      - data/derived
+      - data/snapshots
+      - data/lineage
+      - data/manifests/datasets
+      - data/schemas
+      - wiki/00_project
+      - wiki/90_management/meetings
+      - wiki/90_management/reports
+      - wiki/90_management/base-feedback
+      - llm/context
+      - llm/prompts
+      - llm/generated
+      - llm/evals
+      - attachments
+      - output
+      - archive/deliverables
+      - tests/fixtures
+      - templates
+      - scripts
+  dev:
+    description: 개발형 (REQ → DEV → SCR/API/IF/DB → TC → BUG)
+    dirs:
+      - entities/requirements
+      - entities/features
+      - entities/screens
+      - entities/apis
+      - entities/interfaces
+      - entities/tables
+      - entities/test-cases
+      - entities/defects
+  eval:
+    description: 평가·의사결정형 (OBJ → SUBJ/CAND → EVD → CRIT/MET → EVM → EVAL)
+    dirs:
+      - entities/objectives
+      - entities/subjects
+      - entities/candidates
+      - entities/criteria
+      - entities/metrics
+      - entities/evidence
+      - entities/evaluations
+      - evaluation/models
+      - evaluation/results
+  monitor:
+    description: 선택. 스냅샷 비교 이벤트를 추가만 하며 쌓는다 (형식은 _base/framework/workflows/monitor.md). 자동화는 포함하지 않는다
+    dirs:
+      - data/events
+  rag:
+    description: 선택. RAG 인덱스 생성물 (Git에서 제외). 인덱싱 자동화는 포함하지 않는다
+    dirs:
+      - index
+  governance:
+    description: 템플릿 저장소 전용 (채용 후보, base 결정). 새 프로젝트를 초기화할 때 정리한다
+    template_only: true
+    dirs:
+      - governance/adoption/candidates
+      - governance/adoption/adopted
+      - governance/adoption/rejected
+      - governance/decisions
+
+# 프로필: 기본 모듈 조합과 wiki 단계. 단계는 데이터라서 회사 산출물 표준에 맞게 고칠 수 있다
+profiles:
+  development:
+    description: SI·시스템 구축형
+    modules: [core, dev]
+    phases:
+      - dir: 01_proposal
+        name: 제안
+        purpose: 고객 요구를 파악하고 제안·견적을 확정한다.
+        deliverables: [RFP 분석, 제안서, 견적서, 계약서, PoC 결과]
+        gate: 수주·계약 확정
+      - dir: 02_analysis-design
+        name: 분석·설계
+        purpose: 현행을 분석하고 목표 시스템을 설계한다.
+        deliverables: [프로젝트 계획서, 현행(As-Is) 분석서, 목표(To-Be) 설계서, 요구사항 정의서, 아키텍처 설계서, 인프라 구성도, 인터페이스 설계서, DB 설계서, 개발 표준]
+        gate: 설계 승인
+      - dir: 03_implementation
+        name: 구현
+        purpose: 설계에 따라 개발하고 단위 검증한다.
+        deliverables: [상세 설계서, 화면(Frontend)·서버(Backend)·배치 구현, API 명세, 코드 리뷰 기록, 단위 테스트 결과]
+        gate: 구현 완료 검토
+      - dir: 04_test
+        name: 테스트
+        purpose: 통합·인터페이스·성능·인수 테스트로 품질을 확인한다.
+        deliverables: [테스트 계획서, 통합 테스트 결과, 인터페이스 테스트 결과, 성능 테스트 결과, 인수(UAT) 테스트 결과]
+        gate: 인수 테스트 통과
+      - dir: 05_release
+        name: 릴리스
+        purpose: 운영 환경에 배포한다.
+        deliverables: [배포 계획서, 릴리스 노트, 롤백 계획]
+        gate: 운영 전환 승인
+      - dir: 06_operation
+        name: 운영
+        purpose: 안정화하고 운영 조직에 인계한다.
+        deliverables: [운영 매뉴얼, 인수인계서, 모니터링 기준, 장애 대응 절차]
+        gate: 안정화 완료
+  evaluation:
+    description: 평가·의사결정형
+    modules: [core, eval]
+    phases:
+      - dir: 01_scope
+        name: 범위 정의
+        purpose: 목표와 평가 대상 범위, 제약 조건을 정한다.
+        deliverables: [목표(OBJ), 평가 대상 범위, 하드 조건과 제약]
+        gate: 목표 승인
+      - dir: 02_collect
+        name: 수집
+        purpose: 근거 데이터를 모으고 원본과 시점을 보존한다.
+        deliverables: [데이터셋 등록(DS), 출처 목록, 스냅샷(SNAP)]
+        gate: 데이터 품질 확인
+      - dir: 03_evaluate
+        name: 평가
+        purpose: 기준과 지표로 후보를 평가한다.
+        deliverables: [기준·지표(CRIT/MET), 평가 모델(EVM), 평가 실행 기록(EVAL)]
+        gate: 평가 결과 검토
+      - dir: 04_decide
+        name: 결정
+        purpose: 평가를 근거로 결정한다.
+        deliverables: [의사결정(DEC), 근거 요약]
+        gate: 결정 승인
+      - dir: 05_act-monitor
+        name: 실행·모니터링
+        purpose: 결정을 실행하고 효과를 다시 평가한다.
+        deliverables: [조치(ACT), 후속 평가(EVAL), 모니터링 기준]
+        gate: 목표 달성 확인
+
+# 경로 소유권 (업그레이드 기준)
+#   managed:  base가 관리. 프로젝트에서 고치지 않고 업그레이드로 교체한다
+#   seeds:    초기화 때 한 번 만들어지고 이후 프로젝트가 소유한다
+#   그 밖의 경로는 프로젝트 소유다
+ownership:
+  managed:
+    - _base/**
+    - CLAUDE.md
+    - AGENTS.md#base          # <!-- base:begin --> ~ <!-- base:end --> 블록만. 프로젝트 규칙 블록은 프로젝트 소유
+    - .claude/README.md
+    - .claude/settings.json.example
+    - .claude/agents/data-governance-reviewer.md
+    - .claude/agents/knowledge-curator.md
+    - .claude/agents/traceability-reviewer.md
+    - .claude/skills/impact-analysis/SKILL.md
+    - .claude/skills/project-status/SKILL.md
+    - .claude/skills/register-artifact/SKILL.md
+    - .claude/skills/validate-project/SKILL.md
+    - skills/README.md
+    - skills/project-knowledge-manager/**
+    - .gitignore
+    - .gitattributes
+    - requirements.txt
+  seeds:
+    - README.md               # 초기화 때 _base/seeds/README.md로 교체
+    - _config/*.yml
+    - wiki/00_project/*
+    - wiki/*/README.md         # 단계 README (프로필에서 생성)
+    - llm/context/*
+    - data/manifests/raw-files.yml
+    - data/schemas/example.schema.json
