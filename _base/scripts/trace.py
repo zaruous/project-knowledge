@@ -39,7 +39,7 @@ def main():
         verified = [r for r in reqs if res.inverse[r.id]["verified_by"] or any(
             res.inverse[dev]["verified_by"] for dev in res.inverse[r.id]["implemented_by"])]
         note(f"REQ → DEV 구현 {len(implemented)}/{len(reqs)}, REQ → TC 검증(기능 경유 포함) {len(verified)}/{len(reqs)}")
-    for ev in (r for r in res.records if r.type == "evaluation"):
+    for ev in (r for r in res.records if r.type == "evaluation" and not res.inverse[r.id]["superseded_by"]):
         for ref, pinned in (ev.meta.get("pinned") or {}).items():
             current = res.by_id.get(ref)
             if current and str(current.meta.get("version")) != str(pinned):

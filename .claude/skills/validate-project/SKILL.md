@@ -20,7 +20,7 @@ Then inspect:
 - `AGENTS.md` base/project block markers and `base.version` against `_base/manifest.yml`;
 - `_config/` policies;
 - `.claude/skills/` and `.claude/agents/` structure;
-- `data/raw/` separation and manifests;
+- `data/raw/` separation and manifests, and payload that Git would track against `_config/security-policy.yml` `git_payload` (file size, dataset classification);
 - registry consistency and entity relationships (reported by the validator from `_base/registry/`);
 - AI drafts remaining under `llm/generated/` until approved.
 

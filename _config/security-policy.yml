@@ -6,3 +6,8 @@ rules:
   raw_default: internal
   pii_requires_masking: true
   secrets_in_repository: false
+# payload(raw·staging·normalized·derived·스냅샷 본문·첨부·출력·인덱스)는 기본적으로 Git에 두지 않는다.
+# .gitignore에 명시 예외를 둔 파일만 올리며, 아래 기준을 넘으면 검증 오류다.
+git_payload:
+  max_file_mb: 5
+  allowed_classifications: [public, internal]   # 스냅샷 payload는 담긴 데이터셋(DS)의 등급으로 판단
