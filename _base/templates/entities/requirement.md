@@ -5,7 +5,7 @@ title: 요구사항 제목
 status: draft
 priority: medium      # high | medium | low
 owner: TBD
-source: []            # 근거 문서 경로·첨부 (예: wiki/01_proposal/rfp/고객-RFP.md)
+source: []            # 근거 문서 경로·첨부 (예: wiki/01_proposal/RFP-분석.md)
 updated_at: ""
 ---
 

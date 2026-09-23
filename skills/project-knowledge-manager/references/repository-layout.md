@@ -4,37 +4,32 @@
 
 | Path | Purpose |
 |---|---|
-| `_base/` | template engine: `registry/` (types, statuses, relations) and `templates/` (per-type templates) |
+| `_base/` | template engine, not edited in projects: `manifest.yml` (modules, profiles, ownership), `registry/`, `templates/`, `framework/`, `scripts/` (init_project, validate, trace, self_check), `tests/` |
 | `_config/` | project settings, project-specific types (`types.yml`), LLM, retention, security policy |
-| `framework/` | domain-neutral concepts, workflows, standards |
 | `wiki/` | approved phase-oriented documentation |
 | `entities/` | atomic traceability records (development + generic evaluation entities) |
 | `data/` | incoming/raw/staging/normalized/derived/snapshots/lineage datasets and manifests |
 | `attachments/` | PDF, DOCX, XLSX, PPTX, images, drawings, manuals |
-| `scripts/` | ingestion, transform, validation, traceability, reporting, RAG helpers |
+| `scripts/` | project-specific scripts (base scripts live in `_base/scripts/`) |
 | `llm/` | prompts, context, summaries, generated drafts, evaluation |
-| `index/` | chunks, metadata, embeddings, graph index |
-| `evaluation/` | reusable criteria, scorecards, checklists, quality gates, results |
-| `governance/` | adoption, decisions, changes, retrospectives for the base itself |
+| `index/` | RAG index outputs (optional `rag` module) |
+| `evaluation/` | evaluation models (`models/`) and computed results (`results/`), `eval` module |
+| `governance/` | template repository only: adoption proposals and base decisions (removed when a project is initialized) |
 | `templates/` | project-specific templates (base templates live in `_base/templates/`) |
 | `tests/` | fixtures and integration tests |
 | `output/` | generated reports, exports, diagrams, packages |
 | `archive/` | historical documents, datasets, releases |
 
-## Phase-oriented Wiki
+## Profiles, modules, and Wiki phases
 
-Use these phase groups unless the project has a documented alternative:
+Folders are created by `python _base/scripts/init_project.py --profile <name>` from `_base/manifest.yml`:
 
-- `00_project/`
-- `01_proposal/`
-- `02_preparation/`
-- `03_implementation/`
-- `04_test/`
-- `05_change/`
-- `06_issue-risk/`
-- `07_meeting/`
-- `08_release/`
-- `09_operation/`
+- modules: `core` (always), `dev`, `eval`, optional `monitor` (`data/events/`) and `rag` (`index/`)
+- `development` profile phases: `01_proposal`, `02_analysis-design`, `03_implementation`, `04_test`, `05_release`, `06_operation`
+- `evaluation` profile phases: `01_scope`, `02_collect`, `03_evaluate`, `04_decide`, `05_act-monitor`
+- always: `wiki/00_project/` (overview, glossary) and `wiki/90_management/` (meetings, reports, base-feedback)
+
+Issues, risks, change requests, decisions, actions, and approved deliverables are entities (ISS, RISK, CR, DEC, ACT, DLV), not Wiki folders.
 
 ## Data lifecycle
 

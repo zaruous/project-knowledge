@@ -9,6 +9,7 @@
 - 후보는 `candidates/`에서 검토한다.
 - 채용 시 `adopted/`, 미채용 시 `rejected/`로 결정 기록을 이동한다.
 - 실제 파일 구조/템플릿/스크립트 변경과 Adoption ID를 연결한다.
+- 이 폴더는 템플릿 저장소에만 있다. 프로젝트에서는 `wiki/90_management/base-feedback/`에 먼저 적고, 템플릿 저장소에 후보로 등록한다.
 
 ## 흐름
 

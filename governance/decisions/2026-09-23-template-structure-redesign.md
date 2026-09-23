@@ -2,7 +2,7 @@
 title: 프로젝트 관리 템플릿 구조 개편 결정
 type: base-decision
 status: accepted
-version: 1.1.0
+version: 1.2.0
 updated_at: 2026-09-23
 decided_at: 2026-09-23
 decided_by:
@@ -15,6 +15,10 @@ inputs:
   - "참고 POC: home_finder_18p_project_2026-09-23.zip (평가형 프로젝트 예시, 구조의 정답 아님)"
   - "Claude-Astra 합의 논의 2라운드"
 changelog:
+  - version: 1.2.0
+    date: 2026-09-23
+    changes:
+      - "3단계 구현 조건: `_base/self-check/`는 템플릿 전용 경로에서 제외 (모든 프로젝트의 `_base/`가 같아야 통째로 교체할 수 있음)"
   - version: 1.1.0
     date: 2026-09-23
     changes:
@@ -73,7 +77,8 @@ changelog:
 
 ## GitHub 템플릿 저장소 조건 (1.1.0 추가)
 2026-09-23에 원격 저장소 `zaruous/project-knowledge`가 GitHub 템플릿 저장소로 지정되었습니다. 이에 따라 결정 1, 10을 다음 조건으로 구현합니다.
-- "Use this template"은 기본 브랜치의 파일을 모두 복사합니다. 따라서 `governance/`, `_base/self-check/` 같은 템플릿 전용 경로는 복사를 막을 수 없습니다. 새 프로젝트에서 `init_project.py`가 이런 경로를 정리하고 `base.version`을 기록합니다.
+- "Use this template"은 기본 브랜치의 파일을 모두 복사합니다. 따라서 `governance/` 같은 템플릿 전용 경로는 복사를 막을 수 없습니다. 새 프로젝트에서 `init_project.py`가 이런 경로를 정리하고 `base.version`을 기록합니다.
+- `_base/self-check/`는 템플릿 전용으로 보지 않고 프로젝트에도 남깁니다(1.2.0). 모든 프로젝트의 `_base/`가 템플릿과 같아야 업그레이드 때 통째로 교체할 수 있기 때문입니다.
 - `main`이 새 프로젝트의 출발점이므로, 단계별 작업은 브랜치에서 진행하고 검증을 통과한 뒤에만 `main`에 합칩니다.
 
 ## 위 결정 중 사용자 확인 항목 (D1~D4)
