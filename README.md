@@ -2,9 +2,19 @@
 title: Project Knowledge Repository
 type: repository-guide
 status: active
-version: 3.0.0-alpha.3
-updated_at: 2026-09-23
+version: 3.0.0
+updated_at: 2026-09-24
 changelog:
+  - version: 3.0.0
+    date: 2026-09-24
+    summary: 3.0.0 배포 - 4단계 수락 시험 통과 (alpha.1~3의 구조 개편 포함)
+    decision: governance/decisions/2026-09-23-template-structure-redesign.md
+    changes:
+      - "수락 시험: home_finder를 평가형으로 이관(POC 점수 20/20 재현), 샘플 MES 개발형 프로젝트, 자동 수락 시험 34건 통과"
+      - "payload 정책 검사: Git에 올리는 데이터를 `_config/security-policy.yml`의 `git_payload`(크기, 데이터셋 보안 등급)로 검사"
+      - "데이터 경로 규칙 `data/<단계>/<DS-ID>/` 문서화 (`_base/framework/workflows/collect.md`)"
+      - "대체된 평가는 재평가 필요 보고에서 제외, 섹션 제목의 버전 표기를 경고"
+      - "POC 패턴 4건을 채용 후보로 등록 (ADOPT-0001~0004). 채용 등록부(`adoption-register.yml`)는 ADOPT 레코드로 대체"
   - version: 3.0.0-alpha.3
     date: 2026-09-23
     summary: 3.0.0 3단계 - 템플릿 층 분리, 프로필·모듈, 부트스트랩
@@ -146,7 +156,7 @@ python _base/scripts/validate.py
 2. 관계는 출발 레코드에 한 번만 기록하고, 역방향은 스크립트가 계산합니다.
 3. `data/raw/`는 원본 불변 영역이며, 가공 과정은 `data/lineage/`에, 시점 상태는 `data/snapshots/`에 남깁니다.
 4. `llm/generated/`는 AI 초안이며 승인 전에는 공식 산출물로 취급하지 않습니다.
-5. 대용량 Raw·첨부파일은 Git 대신 MinIO/S3/NAS 사용을 권장하고, 위치와 체크섬만 Git에 둡니다.
+5. payload(Raw·가공 데이터·첨부·출력)는 Git 대신 MinIO/S3/NAS에 두고 위치와 체크섬만 Git에 둡니다. 작은 비민감 데이터만 `.gitignore` 명시 예외로 올리며, 검증기가 `_config/security-policy.yml`의 `git_payload` 기준으로 확인합니다.
 6. `_base/`는 프로젝트에서 고치지 않습니다. 프로젝트 전용 확장은 `_config/types.yml`, `templates/`, `scripts/`에 둡니다.
 7. 이 베이스에는 특정 POC의 실제 데이터나 도메인 전용 개념을 넣지 않습니다. 재사용 가능한 관리 패턴만 `governance/adoption/` 절차를 거쳐 채용합니다.
 
@@ -216,6 +226,7 @@ python -m unittest discover -s _base/tests
 ```
 
 - base 버전을 올릴 때는 이 README front matter와 `_base/manifest.yml`의 `version`을 함께 올립니다. 검증기가 두 값이 같은지 확인합니다.
+- 배포는 `main`에 합친 뒤 `v<version>` 태그와 GitHub Release로 합니다. "Use this template"은 `main`을 복사하므로 `main`은 항상 검증을 통과한 상태로 둡니다.
 - `changelog` 맨 위에 항목을 추가하고 이전 항목은 지우지 않습니다. `AGENTS.md`, `CLAUDE.md`는 자기 문서의 변경 내역만 기록합니다.
 - `CHANGELOG-v2.md`처럼 버전 접미사가 붙은 파일이나 `## ... v2` 같은 버전 섹션을 만들지 않습니다. 규칙은 `_base/framework/standards/metadata.md`에 있습니다.
 - 구조 결정은 `governance/decisions/`, 채용 후보는 `governance/adoption/`에 기록합니다.

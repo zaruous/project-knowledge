@@ -2,9 +2,13 @@
 title: Project Knowledge Agent Guide
 type: agent-guide
 status: active
-version: 3.0.0-alpha.3
-updated_at: 2026-09-23
+version: 3.0.0
+updated_at: 2026-09-24
 changelog:
+  - version: 3.0.0
+    date: 2026-09-24
+    changes:
+      - "payload를 Git에 두지 않는 원칙과 예외 기준(`_config/security-policy.yml`의 `git_payload`), 데이터 경로 규칙(`data/<단계>/<DS-ID>/`) 추가"
   - version: 3.0.0-alpha.3
     date: 2026-09-23
     changes:
@@ -68,7 +72,7 @@ changelog:
 4. 새 레코드는 유형별 템플릿(`_base/templates/`, 프로젝트 전용은 `templates/`)으로 만들고, 파일 이름은 ID와 같게 한다.
 5. AI가 만든 초안은 우선 `llm/generated/`에 저장한다.
 6. `data/raw/` 파일은 수정하거나 덮어쓰지 않는다.
-7. Raw Data를 가공할 때 source, checksum, 생성일, 처리 스크립트를 Manifest와 `data/lineage/`에 기록한다.
+7. Raw Data를 가공할 때 source, checksum, 생성일, 처리 스크립트를 Manifest와 `data/lineage/`에 기록한다. 데이터는 `data/<단계>/<DS-ID>/` 아래에 두고, payload는 Git에 올리지 않는다. 예외는 `.gitignore`에 명시하고 `_config/security-policy.yml`의 `git_payload` 기준(크기, 데이터셋 보안 등급)을 지킨다.
 8. 요구사항이 바뀌면 관련 DEV/API/IF/DB/TC/BUG 영향도를 먼저 확인해 보고한 뒤 관련 산출물을 수정한다.
 9. 중요한 평가 결과는 Evidence, Snapshot, Confidence, Lineage 중 필요한 항목과 연결한다.
 10. 모델별 설정은 `.claude/`, `skills/` 등 provider-specific 영역에 둔다.

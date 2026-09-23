@@ -1,7 +1,7 @@
 # base manifest: 모듈별 폴더, 프로필별 wiki 단계, 경로 소유권의 단일 원천.
 # init_project.py가 프로필·모듈에 맞게 폴더와 단계 README를 만들고, validate.py가 같은 정의로 검사한다.
-version: 3.0.0-alpha.3          # base 버전. 템플릿 저장소 README front matter의 version과 같아야 한다
-updated_at: 2026-09-23
+version: 3.0.0                  # base 버전. 템플릿 저장소 README front matter의 version과 같아야 한다
+updated_at: 2026-09-24
 template_repository: zaruous/project-knowledge
 
 # 모든 저장소에 있어야 하는 경로

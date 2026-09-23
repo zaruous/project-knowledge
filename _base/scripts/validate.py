@@ -5,6 +5,7 @@
 """
 from pathlib import Path
 import re
+import subprocess
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -13,6 +14,11 @@ import knowledge  # noqa: E402
 # 버전은 front matter로 관리한다 (_base/framework/standards/metadata.md)
 VERSIONED_NAME = re.compile(r"[-_.]v\d+(\.\d+)*$", re.IGNORECASE)
 VERSION_SCAN_SKIP = {"data", "attachments", "archive", "output", "index", ".git", ".venv", "__pycache__"}
+VERSION_HEADING = re.compile(r"^#{1,6}\s.*(?<![\w.])v\d+(\.\d+)*(?![\w.])", re.M | re.I)
+PAYLOAD_AREAS = ("data/incoming/", "data/raw/", "data/staging/", "data/normalized/", "data/derived/",
+                 "attachments/", "output/", "index/")
+SNAPSHOT_PAYLOAD = re.compile(r"data/snapshots/([^/]+)/payload/")
+DATASET_PAYLOAD = re.compile(r"data/(?:raw|staging|normalized|derived)/(DS-\d{4})/")  # 데이터는 <단계>/<DS-ID>/ 아래에 둔다
 AGENTS_MARKERS = ("<!-- base:begin -->", "<!-- base:end -->", "<!-- project:begin -->", "<!-- project:end -->")
 
 
@@ -24,6 +30,52 @@ def versioned_names(root: Path):
         stem = p.stem if p.is_file() else p.name
         if VERSIONED_NAME.search(stem):
             yield rel.as_posix()
+
+
+def version_headings(root: Path):
+    for p in root.rglob("*.md"):
+        rel = p.relative_to(root)
+        if rel.parts[0] in VERSION_SCAN_SKIP:
+            continue
+        for m in VERSION_HEADING.finditer(p.read_text(encoding="utf-8", errors="ignore")):
+            yield f"{rel.as_posix()}: '{m.group(0).strip()}' (버전은 front matter changelog로 관리한다)"
+
+
+def payload_problems(root: Path, by_id):
+    """Git에 올라가는(추적 중이거나 무시되지 않은) payload가 보안 정책을 지키는지 검사한다. git 저장소가 아니면 건너뛴다."""
+    policy = knowledge.load_yaml(root / "_config/security-policy.yml") if (root / "_config/security-policy.yml").exists() else {}
+    rule = policy.get("git_payload")
+    if not rule:
+        return []
+    try:
+        proc = subprocess.run(["git", "-C", str(root), "ls-files", "-z", "--cached", "--others", "--exclude-standard"],
+                              capture_output=True)
+    except OSError:
+        return []
+    if proc.returncode != 0:
+        return []
+    max_mb = float(rule.get("max_file_mb", 5))
+    allowed = set(rule.get("allowed_classifications") or [])
+    problems = []
+    for rel in filter(None, proc.stdout.decode("utf-8").split("\0")):
+        snap = SNAPSHOT_PAYLOAD.match(rel)
+        path = root / rel
+        if not (rel.startswith(PAYLOAD_AREAS) or snap) or path.name == ".gitkeep" or not path.is_file():
+            continue
+        if path.stat().st_size > max_mb * 1024 * 1024:
+            problems.append(f"{rel}: Git에 올리는 payload가 {max_mb:g}MB를 넘는다 (_config/security-policy.yml git_payload)")
+        owner = DATASET_PAYLOAD.match(rel)
+        if snap:
+            record = by_id.get(snap.group(1))
+            datasets = knowledge.values(record.meta, "datasets") if record else []
+        else:
+            datasets = [owner.group(1)] if owner else []
+        for ds in datasets:
+            dataset = by_id.get(ds)
+            level = ((dataset.meta.get("security") or {}).get("classification")) if dataset else None
+            if level not in allowed:
+                problems.append(f"{rel}: 데이터셋 {ds}의 보안 등급 '{level}'은 Git에 둘 수 없다 (허용: {', '.join(sorted(allowed))})")
+    return problems
 
 
 def report(title, items):
@@ -68,8 +120,8 @@ def main():
         errors += [f"AGENTS.md: 블록 표시 {m}가 없다" for m in AGENTS_MARKERS if m not in text]
 
     result = knowledge.validate(root)
-    errors += result.errors
-    warnings += result.warnings
+    errors += result.errors + payload_problems(root, result.by_id)
+    warnings += result.warnings + list(version_headings(root))
     missing += knowledge.missing_type_paths(root, result.registry, enabled)
     versioned = list(versioned_names(root))
 

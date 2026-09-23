@@ -7,7 +7,7 @@
 - 특정 도메인 데이터와 업무용어 자체는 베이스에 넣지 않는다.
 - 최소 두 개 이상의 프로젝트에 재사용 가능하거나, 하나의 POC에서 명확한 구조적 효과가 검증된 패턴을 후보로 등록한다.
 - 후보는 `candidates/`에서 검토한다.
-- 채용 시 `adopted/`, 미채용 시 `rejected/`로 결정 기록을 이동한다.
+- 채용 시 `adopted/`, 미채용 시 `rejected/`로 결정 기록을 옮기고 `status`도 함께 바꾼다. 후보 목록은 `python _base/scripts/trace.py`의 `adoption-proposal` 행으로 본다.
 - 실제 파일 구조/템플릿/스크립트 변경과 Adoption ID를 연결한다.
 - 이 폴더는 템플릿 저장소에만 있다. 프로젝트에서는 `wiki/90_management/base-feedback/`에 먼저 적고, 템플릿 저장소에 후보로 등록한다.
 

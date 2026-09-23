@@ -2,8 +2,9 @@
 title: 프로젝트 관리 템플릿 구조 개편 결정
 type: base-decision
 status: accepted
-version: 1.2.0
-updated_at: 2026-09-23
+version: 1.3.0
+updated_at: 2026-09-24
+implemented_in: 3.0.0
 decided_at: 2026-09-23
 decided_by:
   - Claude Code (claude-opus-5-5)
@@ -15,6 +16,10 @@ inputs:
   - "참고 POC: home_finder_18p_project_2026-09-23.zip (평가형 프로젝트 예시, 구조의 정답 아님)"
   - "Claude-Astra 합의 논의 2라운드"
 changelog:
+  - version: 1.3.0
+    date: 2026-09-24
+    changes:
+      - "수락 시험 결과, 시험에서 발견해 고친 것, 남은 한계 기록. 3.0.0으로 구현 완료"
   - version: 1.2.0
     date: 2026-09-23
     changes:
@@ -104,6 +109,43 @@ changelog:
 - Git이 추적하는 파일만으로 구조를 복원했을 때 검증을 통과해야 합니다.
 - 잘못된 fixture는 반드시 실패해야 합니다: 중복 ID, 잘못된 관계 대상, 미등록 상태, 레지스트리와 템플릿 불일치, base 접두어 덮어쓰기.
 - 평가 모델 설정을 바꾸면 계산 결과가 바뀌어야 합니다. home_finder는 공식이 코드에 박혀 있어 이 조건을 만족하지 못했습니다.
+
+## 수락 시험 결과 (1.3.0, 2026-09-24)
+
+| 배포 조건 | 결과 | 근거 |
+|---|---|---|
+| 개발형·평가형 부트스트랩 | 통과 | `test_development_profile`, `test_evaluation_profile_with_monitor`, 시험 A·B |
+| core+dev+eval 조합 | 통과 | `test_development_with_evaluation_module`, `test_every_template_instantiates_a_valid_record` |
+| 재실행 비파괴 | 통과 | `test_rerun_is_non_destructive` (단계 문서를 고친 뒤 다시 실행해도 파일 트리 해시 동일) |
+| Git 추적 파일만으로 복원 | 통과 | `test_tracked_files_alone_are_valid`, 시험 A·B의 clone 검증 |
+| 잘못된 fixture 실패 | 통과 | `test_registry.py` 13종 (중복 ID, 관계 대상, 미등록 상태, 템플릿 불일치, base 접두어 덮어쓰기 등) |
+| 설정 변경 시 계산 반영 | 통과 | `test_evaluation_follows_model_config`, 시험 A |
+
+자동 수락 시험은 `python -m unittest discover -s _base/tests`로 34건 모두 통과했습니다.
+
+### 시험 A: home_finder 이관 (평가형 + monitor, 스크래치 환경)
+- POC 파일 26종이 모두 새 구조에 자리를 찾았습니다. 2.1.0에서 들어갈 곳이 없던 프로젝트 규칙, 진행 현황, 출처 목록, 이벤트, 체크섬도 포함됩니다.
+- 결과는 레코드 65개, 관계 187개, 검증 오류와 경고 0건입니다.
+- 평가 모델 파일을 읽는 계산 스크립트가 POC 기대 점수를 20개 후보 모두 재현했습니다. 하드필터 판정도 POC 경고와 일치했습니다(면적 미달 fail, 면적 미확인 conditional-pass).
+- 평가 모델을 1.1.0에서 1.2.0으로 바꾸자 과거 평가에 재평가 필요가 보고됐고, 다시 계산한 1위 점수가 82.8에서 87.0으로 바뀌었습니다.
+- 매물(listing)을 `_config/types.yml`로 프로젝트 전용 유형으로 확장했습니다.
+
+### 시험 B: MES 개발형 (스크래치 환경)
+- 개발·공통 유형 레코드 24개(REQ부터 DLV까지)를 만들었습니다. wiki 회의록·주간보고·게이트 검토·설계 문서, AI 초안, raw 데이터와 계보, 승인본과 수정본(DLV supersedes)도 포함합니다.
+- 관계 36개, 검증 오류 0건입니다. 구현 기능이 없는 승인 요구사항 1건은 경고로 보고됐습니다.
+- 변경 요청의 대상이 추적 매트릭스의 역방향(`changed_by`)으로 나타났습니다.
+
+### 시험에서 발견해 고친 것
+1. 대체된 평가도 재평가 필요로 보고됐습니다. 이제 대체된 평가는 제외합니다.
+2. payload 정책 검사(합의 P6)가 구현되지 않았습니다. 이제 `security-policy.yml`의 `git_payload` 기준으로 크기와 데이터셋 보안 등급을 검사합니다.
+3. 기밀 raw 파일을 `.gitignore` 예외로 올려도 통과했습니다. 이제 `data/<단계>/<DS-ID>/` 경로에서 데이터셋 등급을 찾아 검사합니다.
+4. 섹션 제목의 버전 표기(`## v2 ...`)를 잡지 못했습니다. 이제 경고로 보고합니다.
+
+### 남은 한계 (3.0.0 범위 밖)
+- 평가 결과는 등록된 후보(CAND)만 참조할 수 있습니다. 후보가 수백 건이면 데이터셋(DS)으로 두고 상위 후보만 엔티티로 올리는 운영이 필요합니다.
+- 근거 하나에 여러 지표를 담으면 신뢰도가 근거 단위로만 남습니다. 지표별 신뢰도가 필요하면 근거를 지표별로 나눕니다.
+- 자동 업그레이드 도구가 없습니다. 수동 절차는 `_base/README.md`에 있습니다.
+- POC 규칙 4건은 채용 후보로만 등록했습니다(ADOPT-0001~0004).
 
 ## 논의 경과
 - Claude는 페르소나 4건을 종합해 제안을 냈습니다: `_base/` 분리, 레지스트리, 프로필·모듈, "닫히는 건은 entities" 기준, 신규 ID 8종, 전 유형 전용 템플릿.
