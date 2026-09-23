@@ -1,0 +1,52 @@
+# 관계 레지스트리.
+# 관계는 출발 레코드에만 한 번 기록한다. 역방향(inverse)은 스크립트가 계산하며, 직접 쓰면 오류다.
+#
+# field    값을 읽는 필드. 기본은 관계 이름. "a[].b"는 목록 a의 각 항목의 b
+# from/to  출발·도착 유형. to: "*"는 ID가 있는 모든 유형
+version: 1.0.0
+updated_at: 2026-09-23
+
+relations:
+  # dev
+  implements:    {from: [feature], to: [requirement], inverse: implemented_by}
+  uses:          {from: [feature], to: [screen, api, interface, table], inverse: used_by}
+  verifies:      {from: [test-case], to: [requirement, feature, screen, api, interface, table], inverse: verified_by}
+  found_by:      {from: [defect], to: [test-case], inverse: found_defects}
+  # core
+  affects:       {from: [defect, issue, risk], to: [requirement, feature, screen, api, interface, table, deliverable, objective, candidate, subject], inverse: affected_by}
+  changes:       {from: [change-request], to: [requirement, feature, screen, api, interface, table, deliverable, criterion, metric, evaluation-model], inverse: changed_by}
+  based_on:      {from: [evaluation, decision], to: [snapshot, dataset, evidence, evaluation, change-request, issue, risk], inverse: basis_of}
+  executes:      {from: [action], to: [decision, issue, risk, evaluation], inverse: actioned_by}
+  supersedes:    {from: [decision, deliverable, evaluation], to: [decision, deliverable, evaluation], inverse: superseded_by}
+  supports:      {from: [dataset], to: [requirement, feature, interface, table, objective], inverse: supported_by}
+  captures:      {field: datasets, from: [snapshot], to: [dataset], inverse: captured_by}
+  follows:       {field: previous_snapshot, from: [snapshot], to: [snapshot], inverse: followed_by}
+  reads:         {field: "inputs[].id", from: [lineage], to: [dataset, snapshot], inverse: read_by}
+  writes:        {field: "outputs[].id", from: [lineage], to: [dataset, snapshot], inverse: written_by}
+  describes:     {from: [wiki-document, meeting-minutes, weekly-report, gate-review, project-overview], to: "*", inverse: described_in}
+  drafts:        {field: target_id, from: [ai-draft], to: "*", inverse: drafted_in}
+  # eval
+  serves:        {from: [subject, candidate, criterion, evaluation-model], to: [objective], inverse: served_by}
+  measures:      {from: [metric], to: [criterion], inverse: measured_by}
+  about:         {from: [evidence], to: [subject, candidate], inverse: evidenced_by}
+  captured_in:   {field: snapshot_id, from: [evidence], to: [snapshot], inverse: captures_evidence}
+  combines:      {field: "criteria[].id", from: [evaluation-model], to: [criterion], inverse: combined_in}
+  measured_with: {field: "criteria[].metric", from: [evaluation-model], to: [metric], inverse: used_in_model}
+  filters_with:  {field: "hard_filters[].metric", from: [evaluation-model], to: [metric], inverse: filter_in}
+  applies:       {from: [evaluation], to: [evaluation-model], inverse: applied_in}
+  evaluates:     {field: "results[].candidate", from: [evaluation], to: [subject, candidate], inverse: evaluated_in}
+  cites:         {field: "results[].evidence", from: [evaluation], to: [evidence], inverse: cited_in}
+  validates:     {from: [evaluation], to: [action], inverse: validated_by}
+
+# 관계 누락 검사
+#   field: 레코드 자신이 채워야 하는 관계 필드 / inverse: 다른 레코드가 가리켜야 하는 역방향 관계
+#   via: inverse를 직접 못 찾으면 이 관계로 한 단계 따라가 대상에서 찾는다 (간접 충족)
+#   when_status: 이 상태일 때만 검사
+coverage:
+  - {type: test-case,  field: verifies, severity: error,   message: "테스트 케이스에 검증 대상(verifies)이 없다"}
+  - {type: evaluation, field: applies,  severity: error,   message: "평가에 적용한 평가 모델(applies)이 없다"}
+  - {type: evaluation, field: based_on, severity: error,   message: "평가에 입력 근거(based_on)가 없다"}
+  - {type: requirement, inverse: implemented_by, when_status: [approved], severity: warning, message: "승인된 요구사항을 구현하는 기능이 없다"}
+  - {type: feature,     inverse: verified_by, via: [uses], when_status: [approved], severity: warning, message: "승인된 기능을 검증하는 테스트가 없다 (사용하는 설계 객체 포함)"}
+  - {type: evidence,    inverse: cited_in, severity: warning, message: "어떤 평가에서도 인용되지 않은 근거"}
+  - {type: action,      inverse: validated_by, when_status: [done], severity: warning, message: "완료된 조치의 효과를 확인한 평가가 없다"}

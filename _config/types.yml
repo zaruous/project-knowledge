@@ -1,0 +1,14 @@
+# 프로젝트 전용 유형·상태·관계 확장.
+# base(_base/registry/)의 유형 이름, 접두어, 집합, 관계 이름은 덮어쓸 수 없다 (검증 오류).
+# 프로젝트 유형의 template은 저장소 루트 기준 경로다 (예: templates/inspection.md).
+#
+# 예:
+# types:
+#   inspection: {prefix: INSP, id: "INSP-####", module: dev, kind: entity, format: md,
+#                path: entities/inspections/, template: templates/inspection.md, status_set: document}
+# relations:
+#   inspects: {from: [inspection], to: [table], inverse: inspected_by}
+types: {}
+status_sets: {}
+result_sets: {}
+relations: {}

@@ -8,7 +8,8 @@
 - `ingest/`: 외부 데이터/문서 반입
 - `transform/`: Raw → staging/normalized/derived 변환 (Lineage 기록 포함)
 - `wiki/`: Wiki 문서 관리
-- `traceability/`: 개발/범용 엔티티 관계 검사 (`framework/standards/naming.md`의 ID 기준)
+- `lib/`: 공용 모듈 (`knowledge.py`: 레지스트리 로드, 레코드 스캔·검증, 역방향 관계 계산)
+- `traceability/`: 추적 매트릭스와 커버리지·재평가 필요 보고 (`_base/registry/relations.yml` 기준)
 - `evaluate/`: Evaluation, Quality Gate, Self Check 실행
 - `governance/`: Adoption 등 베이스 거버넌스 자동화
 - `monitor/`: Snapshot 기반 변화 감시
@@ -25,5 +26,6 @@ Claude Code와 ChatGPT/Codex 모두 같은 스크립트를 호출하도록 유�
 pip install -r requirements.txt
 python scripts/validation/validate_structure.py   # 필수 경로, README 버전 front matter, 버전 접미사 파일명 검사
 python scripts/evaluate/self_check_base.py        # 구조 검증 + 핵심 관리 문서 자가점검
-python scripts/traceability/build_trace_matrix.py # 엔티티 ID 추적 매트릭스(CSV)
+python scripts/traceability/build_trace_matrix.py # 추적 매트릭스(CSV), 요약은 stderr
+python -m unittest discover -s tests              # 검증기 수락 시험 (tests/integration/)
 ```

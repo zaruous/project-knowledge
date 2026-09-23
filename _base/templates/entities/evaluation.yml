@@ -1,0 +1,20 @@
+id: EVAL-0000
+type: evaluation
+status: draft              # draft -> final. final 이후 수정하지 않고, 다시 평가하면 새 EVAL을 만든다
+applies: []                # 적용한 평가 모델 (EVM)
+based_on: []               # 입력 스냅샷·데이터셋·근거 (SNAP/DS/EVD)
+pinned: {}                 # 사용한 정의의 버전. 예: {EVM-0001: 1.1.0, CRIT-0001: 1.0.0}
+computed_by:
+  script: ""
+  commit: ""
+  args: []
+executed_at: ""
+validates: []              # 이 평가로 효과를 확인하는 조치 (ACT)
+supersedes: []             # 대체하는 이전 평가 (EVAL)
+results:
+  - candidate: ""          # CAND/SUBJ
+    scores: {}             # 기준별 점수. 예: {CRIT-0001: 17.5}
+    evidence: []           # EVD
+    confidence: unknown
+    gate: not-evaluated    # not-evaluated | pass | conditional-pass | fail
+    total: null

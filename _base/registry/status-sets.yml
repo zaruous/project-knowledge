@@ -1,0 +1,25 @@
+# 상태 레지스트리. 값은 kebab-case.
+# status_sets: 레코드 수명주기(status 필드)
+# result_sets: status가 아닌 결과 필드(테스트 결과, 게이트 판정 등). status와 섞지 않는다
+version: 1.0.0
+updated_at: 2026-09-23
+
+status_sets:
+  document:       [draft, review, approved, rejected, deprecated, archived]
+  decision:       [proposed, accepted, rejected, superseded]
+  action:         [open, in-progress, done, cancelled]
+  issue:          [open, in-progress, resolved, closed]
+  risk:           [identified, mitigating, occurred, closed]
+  change-request: [requested, analyzing, approved, rejected, implemented]
+  defect:         [open, in-progress, resolved, closed, rejected]
+  deliverable:    [planned, drafting, submitted, approved, superseded]
+  subject:        [active, inactive]
+  candidate:      [active, shortlisted, rejected, selected]
+  run:            [draft, final]          # final 이후 수정하지 않는다
+  dataset:        [active, deprecated, archived]
+  adoption:       [candidate, adopted, rejected]
+  draft:          [draft, review, approved, rejected, promoted]
+
+result_sets:
+  test-result: [not-run, pass, fail, blocked]
+  gate:        [not-evaluated, pass, conditional-pass, fail]

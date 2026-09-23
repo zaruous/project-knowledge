@@ -48,8 +48,11 @@ Use these prefixes:
 - `CR-####` change request
 - `DEC-####` decision
 - `DS-####` dataset
+- `ISS-####` issue, `RISK-####` risk, `DLV-####` approved deliverable
 
-For evaluation-oriented work, also use `OBJ` objective, `SUBJ` subject, `CAND` candidate, `EVD` evidence, `CRIT` criterion, `MET` metric, `EVAL` evaluation, `ACT` action, `SNAP` snapshot, `LINEAGE` data lineage, and `ADOPT` adoption proposal.
+For evaluation-oriented work, also use `OBJ` objective, `SUBJ` subject, `CAND` candidate, `EVD` evidence, `CRIT` criterion, `MET` metric, `EVM` evaluation model, `EVAL` evaluation, `ACT` action, `SNAP` snapshot, `LINEAGE` data lineage, and `ADOPT` adoption proposal.
+
+When the repository has `_base/registry/`, it is the source of truth for types, ID formats, locations, status values, and relation fields. Record each relation once on the source record and never write inverse fields.
 
 Record document versions in YAML front matter (`version`, `changelog`); never branch files or sections by version.
 

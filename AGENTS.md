@@ -2,9 +2,15 @@
 title: Project Knowledge Agent Guide
 type: agent-guide
 status: active
-version: 3.0.0-alpha.1
+version: 3.0.0-alpha.2
 updated_at: 2026-09-23
 changelog:
+  - version: 3.0.0-alpha.2
+    date: 2026-09-23
+    changes:
+      - "공식 기록 위치를 레지스트리(`_base/registry/types.yml`) 기준으로 변경하고, 승인 여부는 status로 판단하도록 명시"
+      - "템플릿 위치(`_base/templates/`, 프로젝트 전용 `templates/`)와 관계 기록 규칙(출발 레코드에만 기록) 추가"
+      - "검증에 단위 테스트 추가"
   - version: 3.0.0-alpha.1
     date: 2026-09-23
     changes:
@@ -39,8 +45,9 @@ changelog:
 1. `AGENTS.md` (이 문서)
 2. `README.md`: 디렉터리 구조, 경로별 역할, 저장소 버전
 3. `_config/`: 프로젝트, 보안, 보존, 문서 유형, LLM 정책
-4. `framework/`: 범용 개념, 워크플로, 표준 (ID는 `framework/standards/naming.md`)
-5. 필요할 때 `llm/context/`(도메인, 아키텍처, 코딩 규칙)와 `wiki/00_project/glossary.md`(용어)
+4. `_base/registry/`: 유형·ID·상태·관계의 원천 (설명은 `framework/standards/`)
+5. `framework/`: 범용 개념, 워크플로, 표준
+6. 필요할 때 `llm/context/`(도메인, 아키텍처, 코딩 규칙)와 `wiki/00_project/glossary.md`(용어)
 
 ## Provider 진입점
 - 공통 규칙: `AGENTS.md`
@@ -50,13 +57,14 @@ changelog:
 ## 작업 우선순위
 1. 기존 문서와 엔티티를 먼저 검색한다.
 2. 중복 ID나 중복 문서를 생성하지 않는다.
-3. 공식 기록은 `wiki/`, `entities/`, 데이터 기록(`data/manifests/`)에만 반영한다.
-4. AI가 만든 초안은 우선 `llm/generated/`에 저장한다.
-5. `data/raw/` 파일은 수정하거나 덮어쓰지 않는다.
-6. Raw Data를 가공할 때 source, checksum, 생성일, 처리 스크립트를 Manifest와 `data/lineage/`에 기록한다.
-7. 요구사항이 바뀌면 관련 DEV/API/IF/DB/TC/BUG 영향도를 먼저 확인해 보고한 뒤 관련 산출물을 수정한다.
-8. 중요한 평가 결과는 Evidence, Snapshot, Confidence, Lineage 중 필요한 항목과 연결한다.
-9. 모델별 설정은 `.claude/`, `skills/` 등 provider-specific 영역에 둔다.
+3. 공식 기록은 레지스트리(`_base/registry/types.yml`)에 등록된 위치에만 반영한다. 승인 여부는 위치가 아니라 `status`로 판단한다.
+4. 새 레코드는 유형별 템플릿(`_base/templates/`, 프로젝트 전용은 `templates/`)으로 만들고, 파일 이름은 ID와 같게 한다.
+5. AI가 만든 초안은 우선 `llm/generated/`에 저장한다.
+6. `data/raw/` 파일은 수정하거나 덮어쓰지 않는다.
+7. Raw Data를 가공할 때 source, checksum, 생성일, 처리 스크립트를 Manifest와 `data/lineage/`에 기록한다.
+8. 요구사항이 바뀌면 관련 DEV/API/IF/DB/TC/BUG 영향도를 먼저 확인해 보고한 뒤 관련 산출물을 수정한다.
+9. 중요한 평가 결과는 Evidence, Snapshot, Confidence, Lineage 중 필요한 항목과 연결한다.
+10. 모델별 설정은 `.claude/`, `skills/` 등 provider-specific 영역에 둔다.
 
 ## 공통 베이스 규칙
 - 공통 영역에는 특정 POC의 실제 데이터와 도메인 전용 구조를 추가하지 않는다.
@@ -65,16 +73,13 @@ changelog:
 - 구조나 정책을 바꾼 뒤에는 `검증`의 명령을 모두 통과해야 한다. 실패하면 검사를 우회하지 말고 구조를 고친다.
 
 ## ID 규칙
-ID 접두어, 형식, 저장 위치는 `framework/standards/naming.md`를 단일 기준으로 따른다.
-
-- 개발 엔티티: REQ, DEV, SCR, API, IF, DB, TC, BUG, CR, DEC, DS
-- 범용 평가 엔티티: OBJ, SUBJ, CAND, EVD, CRIT, MET, EVAL, ACT, SNAP, LINEAGE, ADOPT
+ID 접두어, 형식, 저장 위치는 `_base/registry/types.yml`이 원천이다. 모듈별 접두어 요약과 규칙은 `framework/standards/naming.md`에 있다. 프로젝트 전용 유형은 `_config/types.yml`에 추가하며 base 유형·접두어를 덮어쓸 수 없다.
 
 ## 문서 관계
 - 개발 체인: `REQ → DEV → (SCR/API/IF/DB) → TC → BUG`
 - 범용 평가 체인: `Objective → Subject/Candidate → Evidence → Metric/Criterion → Evaluation → Decision → Action → Validation`
 
-상세 기준은 `framework/standards/traceability.md`를 따른다.
+관계는 출발 레코드에 한 번만 기록하고, 역방향(`implemented_by` 등)은 직접 쓰지 않는다. 관계 이름과 허용 유형은 `_base/registry/relations.yml`, 설명은 `framework/standards/traceability.md`를 따른다.
 
 ## 데이터 흐름
 `incoming → raw → staging → normalized → derived → snapshot/evidence → evaluation`
@@ -88,7 +93,7 @@ ID 접두어, 형식, 저장 위치는 `framework/standards/naming.md`를 단일
 - 컨텍스트는 `_config/llm-policy.yml`의 `context_priority` 순서로 사용한다.
 - 대용량 Raw Data를 무조건 LLM 컨텍스트에 넣지 않는다. 먼저 Parser/Normalizer로 구조화하고 필요한 범위만 Chunk한다.
 - 생성물에는 근거 문서/엔티티/데이터셋 ID를 남긴다.
-- 사람이 승인하기 전 AI 생성물은 공식 상태로 승격하지 않는다.
+- 사람이 승인하기 전 AI 생성물은 공식 상태로 승격하지 않는다. 초안은 `_base/templates/llm/draft.md` 형식으로 생성 도구·근거·승격 위치를 남긴다.
 - API key, password, access token, `.env` 비밀값을 Wiki/LLM 컨텍스트에 저장하지 않는다.
 
 ## 검증
@@ -99,4 +104,5 @@ pip install -r requirements.txt
 python scripts/validation/validate_structure.py
 python scripts/evaluate/self_check_base.py
 python scripts/traceability/build_trace_matrix.py   # 추적 매트릭스(CSV)
+python -m unittest discover -s tests                # 검증기 수락 시험
 ```

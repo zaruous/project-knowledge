@@ -1,0 +1,56 @@
+# 유형 레지스트리: ID 형식, 저장 위치, 형식, 템플릿, 상태 집합의 단일 원천.
+# 문서와 스크립트는 이 파일을 읽기만 한다. 프로젝트 전용 유형은 _config/types.yml에 추가한다.
+#
+# id        ID 형식. # = 숫자 1자리, YYYY/MM/DD = 날짜. 없으면 ID 없는 문서(wiki 등)
+# module    core | dev | eval | governance (프로젝트 프로필이 켜는 단위)
+# kind      entity(entities/) | record(데이터·모델·거버넌스 기록) | wiki | draft
+# format    md(front matter) | yml(최상위 키)
+# path      공식 기록 위치 (저장소 루트 기준)
+# file      path 아래 파일 경로 규칙. 기본 "{id}.{format}", ID 없는 유형은 기본 "**/*.md"
+# template  _base/templates/ 기준 템플릿 경로
+# status_set  status 필드 값 집합 (status-sets.yml)
+# fields    status가 아닌 결과 필드의 값 집합. "a[].b"는 목록 a의 각 항목의 b
+# required  비어 있으면 안 되는 필드
+version: 1.0.0
+updated_at: 2026-09-23
+
+types:
+  # core: 모든 프로젝트
+  decision:       {prefix: DEC,     id: "DEC-####",          module: core, kind: entity, format: md,  path: entities/decisions/,       template: entities/decision.md,       status_set: decision,       required: [title]}
+  action:         {prefix: ACT,     id: "ACT-####",          module: core, kind: entity, format: md,  path: entities/actions/,         template: entities/action.md,         status_set: action,         required: [title]}
+  issue:          {prefix: ISS,     id: "ISS-####",          module: core, kind: entity, format: md,  path: entities/issues/,          template: entities/issue.md,          status_set: issue,          required: [title]}
+  risk:           {prefix: RISK,    id: "RISK-####",         module: core, kind: entity, format: md,  path: entities/risks/,           template: entities/risk.md,           status_set: risk,           required: [title]}
+  change-request: {prefix: CR,      id: "CR-####",           module: core, kind: entity, format: md,  path: entities/change-requests/, template: entities/change-request.md, status_set: change-request, required: [title]}
+  deliverable:    {prefix: DLV,     id: "DLV-####",          module: core, kind: entity, format: md,  path: entities/deliverables/,    template: entities/deliverable.md,    status_set: deliverable,    required: [title]}
+  dataset:        {prefix: DS,      id: "DS-####",           module: core, kind: record, format: yml, path: data/manifests/datasets/,  template: data/dataset.yml,           status_set: dataset,        required: [name]}
+  snapshot:       {prefix: SNAP,    id: "SNAP-YYYYMMDD-###", module: core, kind: record, format: yml, path: data/snapshots/,           template: data/snapshot.yml,          file: "{id}/snapshot.yml"}
+  lineage:        {prefix: LINEAGE, id: "LINEAGE-####",      module: core, kind: record, format: yml, path: data/lineage/,             template: data/lineage.yml}
+  wiki-document:    {module: core, kind: wiki,  format: md, path: wiki/,          template: wiki/wiki-document.md,   status_set: document, required: [title]}
+  meeting-minutes:  {module: core, kind: wiki,  format: md, path: wiki/,          template: wiki/meeting-minutes.md, status_set: document, required: [title]}
+  weekly-report:    {module: core, kind: wiki,  format: md, path: wiki/,          template: wiki/weekly-report.md,   status_set: document, required: [title]}
+  gate-review:      {module: core, kind: wiki,  format: md, path: wiki/,          template: wiki/gate-review.md,     status_set: document, required: [title], fields: {result: gate}}
+  project-overview: {module: core, kind: wiki,  format: md, path: wiki/,          status_set: document}
+  ai-draft:         {module: core, kind: draft, format: md, path: llm/generated/, template: llm/draft.md,            status_set: draft,    required: [title]}
+
+  # dev: 개발형 (REQ → DEV → SCR/API/IF/DB → TC → BUG)
+  requirement:    {prefix: REQ, id: "REQ-####", module: dev, kind: entity, format: md, path: entities/requirements/, template: entities/requirement.md,   status_set: document, required: [title]}
+  feature:        {prefix: DEV, id: "DEV-####", module: dev, kind: entity, format: md, path: entities/features/,     template: entities/feature.md,       status_set: document, required: [title]}
+  screen:         {prefix: SCR, id: "SCR-####", module: dev, kind: entity, format: md, path: entities/screens/,      template: entities/design-object.md, status_set: document, required: [title]}
+  api:            {prefix: API, id: "API-####", module: dev, kind: entity, format: md, path: entities/apis/,         template: entities/design-object.md, status_set: document, required: [title]}
+  interface:      {prefix: IF,  id: "IF-####",  module: dev, kind: entity, format: md, path: entities/interfaces/,   template: entities/design-object.md, status_set: document, required: [title]}
+  table:          {prefix: DB,  id: "DB-####",  module: dev, kind: entity, format: md, path: entities/tables/,       template: entities/design-object.md, status_set: document, required: [title]}
+  test-case:      {prefix: TC,  id: "TC-####",  module: dev, kind: entity, format: md, path: entities/test-cases/,   template: entities/test-case.md,     status_set: document, required: [title], fields: {result: test-result}}
+  defect:         {prefix: BUG, id: "BUG-####", module: dev, kind: entity, format: md, path: entities/defects/,      template: entities/defect.md,        status_set: defect,   required: [title]}
+
+  # eval: 평가·의사결정형 (OBJ → SUBJ/CAND → EVD → CRIT/MET → EVM → EVAL → DEC → ACT)
+  objective:        {prefix: OBJ,  id: "OBJ-####",  module: eval, kind: entity, format: md,  path: entities/objectives/, template: entities/objective.md,        status_set: document,  required: [title]}
+  subject:          {prefix: SUBJ, id: "SUBJ-####", module: eval, kind: entity, format: md,  path: entities/subjects/,   template: entities/candidate.md,        status_set: subject,   required: [title]}
+  candidate:        {prefix: CAND, id: "CAND-####", module: eval, kind: entity, format: md,  path: entities/candidates/, template: entities/candidate.md,        status_set: candidate, required: [title]}
+  criterion:        {prefix: CRIT, id: "CRIT-####", module: eval, kind: entity, format: md,  path: entities/criteria/,   template: entities/criterion.md,        status_set: document,  required: [title, version]}
+  metric:           {prefix: MET,  id: "MET-####",  module: eval, kind: entity, format: yml, path: entities/metrics/,    template: entities/metric.yml,          status_set: document,  required: [title, version]}
+  evidence:         {prefix: EVD,  id: "EVD-####",  module: eval, kind: entity, format: yml, path: entities/evidence/,   template: entities/evidence.yml}
+  evaluation:       {prefix: EVAL, id: "EVAL-####", module: eval, kind: entity, format: yml, path: entities/evaluations/, template: entities/evaluation.yml,      status_set: run,       fields: {"results[].gate": gate}}
+  evaluation-model: {prefix: EVM,  id: "EVM-####",  module: eval, kind: record, format: yml, path: evaluation/models/,   template: evaluation/evaluation-model.yml, status_set: document, required: [title, version]}
+
+  # governance: 템플릿 저장소 전용
+  adoption-proposal: {prefix: ADOPT, id: "ADOPT-####", module: governance, kind: record, format: md, path: governance/adoption/, file: "**/{id}.md", template: governance/adoption-proposal.md, status_set: adoption, required: [title]}

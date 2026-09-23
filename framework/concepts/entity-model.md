@@ -1,23 +1,29 @@
 # Entity Model
 
-범용 엔티티:
-- Objective: 달성하려는 목표
-- Subject: 관찰/관리 대상
-- Candidate: 비교 또는 선택 후보
-- Evidence: 판단 근거
-- Criterion: 평가 기준
-- Metric: 측정 가능한 지표
-- Evaluation: 기준과 근거를 적용한 평가 결과
-- Decision: 평가 이후의 의사결정
-- Action: 실행 항목
-- Dataset: 원천 또는 가공 데이터 집합
+## 엔티티와 wiki의 경계
+독립 ID와 관계가 필요한 대상은 엔티티로, 여러 대상을 종합해 설명하는 문서는 wiki로 관리한다. 작은 엔티티의 상세 내용은 엔티티 본문에 쓴다. 공식 기록 위치는 레지스트리가 정의하고, 승인 여부는 위치가 아니라 `status`로 판단한다.
 
-개발 엔티티:
+## 공통 엔티티
+- Decision: 평가·변경·이슈를 근거로 한 의사결정
+- Action: 결정·이슈·리스크·평가에서 나온 실행 항목
+- Issue / Risk: 진행 중인 문제와 잠재 위험
+- Change Request: 요구사항·범위·평가 정의의 변경 요청
+- Deliverable: 고객 승인 산출물과 승인본 보존 기록
+- Dataset / Snapshot / Lineage: 데이터 원천, 시점 상태, 변환 계보
+
+## 개발 엔티티
 - Requirement: 요구사항
 - Feature: 요구사항을 구현하는 개발 기능
-- Screen / API / Interface / Table: 기능이 구현되는 대상
-- Test Case: 기능 검증
+- Screen / API / Interface / Table: 기능이 사용하는 설계 객체
+- Test Case: 기능과 설계 객체 검증
 - Defect: 테스트에서 발견된 결함
-- Change Request: 요구사항/범위 변경 요청
 
-개발 프로젝트는 범용 엔티티와 개발 엔티티를 함께 사용한다. 접두어와 저장 위치는 `framework/standards/naming.md`를 따른다.
+## 평가 엔티티
+- Objective: 달성하려는 목표
+- Subject / Candidate: 관찰 대상 / 비교·선택 후보
+- Evidence: 판단 근거
+- Criterion / Metric: 평가 기준의 의미 / 측정 방법과 단위
+- Evaluation Model: 기준과 지표를 조합한 가중치·필터·공식
+- Evaluation: 평가 모델을 적용한 한 번의 실행 결과
+
+유형, 접두어, 저장 위치는 `_base/registry/types.yml`이 정의한다 (`framework/standards/naming.md`).

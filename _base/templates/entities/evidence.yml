@@ -1,0 +1,14 @@
+id: EVD-0000
+type: evidence
+about: []                  # 근거 대상 (SUBJ/CAND)
+source:
+  type: unknown
+  ref: ""
+observed_at: ""            # 실제 관측 시각
+collected_at: ""           # 시스템 수집 시각
+value: null
+confidence:
+  level: unknown
+  score: null
+snapshot_id: null          # 근거가 속한 스냅샷 (SNAP)
+lineage: []

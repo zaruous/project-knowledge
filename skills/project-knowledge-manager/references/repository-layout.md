@@ -4,8 +4,9 @@
 
 | Path | Purpose |
 |---|---|
-| `_config/` | project, document type, status, LLM, retention, security policy |
-| `framework/` | domain-neutral concepts, workflows, standards (ID prefixes in `standards/naming.md`) |
+| `_base/` | template engine: `registry/` (types, statuses, relations) and `templates/` (per-type templates) |
+| `_config/` | project settings, project-specific types (`types.yml`), LLM, retention, security policy |
+| `framework/` | domain-neutral concepts, workflows, standards |
 | `wiki/` | approved phase-oriented documentation |
 | `entities/` | atomic traceability records (development + generic evaluation entities) |
 | `data/` | incoming/raw/staging/normalized/derived/snapshots/lineage datasets and manifests |
@@ -15,7 +16,7 @@
 | `index/` | chunks, metadata, embeddings, graph index |
 | `evaluation/` | reusable criteria, scorecards, checklists, quality gates, results |
 | `governance/` | adoption, decisions, changes, retrospectives for the base itself |
-| `templates/` | reusable Markdown/YAML templates |
+| `templates/` | project-specific templates (base templates live in `_base/templates/`) |
 | `tests/` | fixtures and integration tests |
 | `output/` | generated reports, exports, diagrams, packages |
 | `archive/` | historical documents, datasets, releases |

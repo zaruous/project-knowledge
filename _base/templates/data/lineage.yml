@@ -1,0 +1,14 @@
+id: LINEAGE-0000
+type: lineage
+inputs:                    # 입력 (DS/SNAP)
+  - id: ""
+    sha256: ""
+outputs:                   # 출력 (DS/SNAP)
+  - id: ""
+    sha256: ""
+process:
+  script: ""
+  commit: ""
+  params: {}
+executed_at: ""
+executed_by: ""

@@ -1,0 +1,17 @@
+id: EVM-0000
+type: evaluation-model
+title: 평가 모델 이름
+status: draft
+version: 1.0.0             # 가중치·필터·공식이 바뀌면 올린다. 평가(EVAL)가 pinned로 고정한다
+serves: []                 # 관련 목표 (OBJ)
+criteria:                  # 기준(CRIT)과 지표(MET)를 참조해 조합한다. 정의는 CRIT/MET에 둔다
+  - id: ""
+    metric: ""
+    weight: 0
+hard_filters: []           # 점수보다 먼저 적용. 예: [{metric: MET-0001, rule: "<= 600000000"}]
+formula: ""                # 계산 방식 설명. 계산은 calculator 스크립트가 이 파일을 읽어 수행한다
+calculator:
+  script: ""
+confidence_scale: {}       # 신뢰도 등급 정의 (프로젝트가 정한다)
+updated_at: ""
+changelog: []
