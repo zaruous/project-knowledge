@@ -2,9 +2,24 @@
 title: Project Knowledge Repository
 type: repository-guide
 status: active
-version: 2.1.0
+version: 3.0.0-alpha.1
 updated_at: 2026-09-23
 changelog:
+  - version: 3.0.0-alpha.1
+    date: 2026-09-23
+    summary: 3.0.0 1단계 - 버그 수정과 중복 경로 정리 (구조 유지)
+    decision: governance/decisions/2026-09-23-template-structure-redesign.md
+    changes:
+      - "`.gitignore`가 하위 폴더의 `.gitkeep`까지 제외하던 버그 수정. `.env.*`, `.claude/settings.local.json`, 스냅샷 payload 제외 추가"
+      - "`.gitattributes`로 저장소 줄바꿈을 LF로 고정"
+      - "`init_project.py`: 기존 설정 보존(PyYAML 직렬화), 재실행 안전, `--dry-run`, 저장소 루트 기본값. `init-project.ps1` 삭제"
+      - "`requirements.txt` 추가 (PyYAML)"
+      - "wiki에서 entities와 겹치는 폴더 9개 삭제 (requirements 3곳, test cases/defects, change-request, decisions, actions, 03_implementation/deployment)"
+      - "`evaluation/criteria/` 삭제. 평가 기준 정의는 `entities/criteria/`"
+      - "데이터셋 기록 위치를 `data/manifests/datasets/`로 단일화 (`entities/datasets/`, `datasets.yml` 삭제)"
+      - "`data/samples/` 삭제(`tests/fixtures/` 사용), `llm/context/terminology.md` 삭제(`wiki/00_project/glossary.md` 사용)"
+      - "`llm/providers/` 폐지: 컨텍스트 우선순위는 `_config/llm-policy.yml`, Claude 안내는 `.claude/README.md`, ChatGPT/Codex 안내는 `skills/README.md`"
+      - "`CLAUDE.md`는 `@AGENTS.md`를 가져오고 Claude 전용 내용만 유지. 공통 규칙은 `AGENTS.md` 단일 원천"
   - version: 2.1.0
     date: 2026-09-23
     summary: 버전별로 분기된 파일과 섹션을 단일 구조로 통합
@@ -87,12 +102,10 @@ Wiki 기반 프로젝트 산출물, 엔티티 추적성, Raw Data, 평가·의�
 
 ## Agent / LLM 진입점
 
-- `AGENTS.md`: ChatGPT/Codex를 포함한 공통 Agent 운영 규칙
-- `CLAUDE.md`: Claude Code 프로젝트 진입점
-- `.claude/skills/`: Claude Code 반복 워크플로우
-- `.claude/agents/`: Claude Code 전문 서브에이전트
-- `skills/project-knowledge-manager/`: ChatGPT용 Project Knowledge Skill 소스
-- `llm/providers/`: Claude/OpenAI 등 provider-specific 가이드
+- `AGENTS.md`: 모든 Agent가 공유하는 규칙의 단일 원천
+- `CLAUDE.md`: Claude Code 진입점 (`AGENTS.md`를 가져오고 Claude 전용 내용만 추가)
+- `.claude/`: Claude Code 스킬, 서브에이전트, 설정 예시, 사용 안내(`README.md`)
+- `skills/`: ChatGPT/Codex Skill 소스와 사용 안내(`README.md`)
 
 ## 디렉터리 구조
 
@@ -102,12 +115,12 @@ project-knowledge/
 ├─ framework/      # 범용 개념(concepts) / 워크플로(workflows) / 표준(standards)
 ├─ wiki/           # 프로젝트 단계별 공식 문서 (00_project ~ 09_operation)
 ├─ entities/       # 추적성 원자 엔티티 (개발 엔티티 + 범용 평가 엔티티)
-├─ data/           # incoming/raw/staging/normalized/derived + snapshots/lineage/manifests/schemas/samples
+├─ data/           # incoming/raw/staging/normalized/derived + snapshots/lineage/manifests/schemas
 ├─ attachments/    # PDF, DOCX, XLSX, 이미지 등 원본 첨부물
-├─ evaluation/     # 재사용 평가 규칙(criteria/scorecards/checklists/quality-gates)과 실행 결과(results)
+├─ evaluation/     # 재사용 평가 규칙(scorecards/checklists/quality-gates)과 계산 결과(results)
 ├─ governance/     # 베이스 자체의 운영 기록 (adoption/decisions/changes/retrospectives)
 ├─ scripts/        # 초기화, 수집, 변환, 평가, 검증, 추적성, 모니터링, 보고, RAG 자동화
-├─ llm/            # 공통 컨텍스트, 프롬프트, provider 가이드, AI 생성물, LLM 평가
+├─ llm/            # 공통 컨텍스트, 프롬프트, AI 생성물, LLM 평가
 ├─ index/          # chunk, metadata, embedding, graph
 ├─ templates/      # 표준 문서/메타데이터 템플릿
 ├─ tests/          # fixtures/integration
@@ -125,10 +138,11 @@ project-knowledge/
 | 경로 | 담는 것 |
 |---|---|
 | `entities/decisions/` | 프로젝트 의사결정 레코드 (`DEC-####`) |
-| `wiki/05_change/decisions/` | 승인된 의사결정 Wiki 문서 |
-| `governance/decisions/` | 공통 베이스 자체의 구조/정책 결정 |
-| `entities/criteria/`, `entities/evaluations/` | 프로젝트 평가 레코드 (`CRIT-####`, `EVAL-####`) |
-| `evaluation/` | 여러 프로젝트에서 재사용하는 평가 규칙 세트와 자가점검 결과 |
+| `governance/decisions/` | 공통 베이스(템플릿) 자체의 구조·정책 결정 |
+| `entities/criteria/`, `entities/metrics/` | 평가 기준·지표 정의 (`CRIT-####`, `MET-####`) |
+| `entities/evaluations/` | 평가 실행 기록 (`EVAL-####`) |
+| `evaluation/` | 재사용 평가 규칙 세트(scorecards, quality-gates, checklists)와 계산 결과(results) |
+| `data/manifests/datasets/` | 데이터셋 기록 (`DS-####`). 이 한 곳에서만 관리 |
 
 ID 접두어와 저장 위치의 전체 매핑은 `framework/standards/naming.md`를 따릅니다.
 
@@ -138,13 +152,17 @@ ID 접두어와 저장 위치의 전체 매핑은 `framework/standards/naming.md
 
 ## 빠른 시작
 
+GitHub에서 이 저장소의 **Use this template**으로 새 프로젝트 저장소를 만든 뒤, 새 저장소 루트에서 실행합니다.
+
 ```bash
+pip install -r requirements.txt
+python scripts/bootstrap/init_project.py --name "MES 구축" --code MES-001 --dry-run   # 결과 미리보기
 python scripts/bootstrap/init_project.py --name "MES 구축" --code MES-001
 python scripts/validation/validate_structure.py
 python scripts/evaluate/self_check_base.py
 ```
 
-Windows PowerShell에서는 `scripts/bootstrap/init-project.ps1`도 사용할 수 있습니다.
+bash와 PowerShell에서 같은 명령을 사용합니다. `init_project.py`는 `_config/project.yml`의 다른 설정을 보존하므로 다시 실행해도 안전합니다.
 
 Claude Code를 사용하는 경우 저장소 루트에서 실행하면 `CLAUDE.md`를 기준으로 프로젝트 규칙을 적용할 수 있습니다. `.claude/settings.json.example`은 필요한 경우 검토 후 `.claude/settings.json`으로 복사하여 사용합니다.
 

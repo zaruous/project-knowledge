@@ -13,7 +13,6 @@ REQUIRED = [
     "data/manifests",
     "scripts",
     "llm",
-    "llm/providers/claude",
     ".claude/skills",
     ".claude/agents",
     "index",

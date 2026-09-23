@@ -8,19 +8,19 @@ REQUIRED = [
     "README.md", "AGENTS.md", "CLAUDE.md",
     "_config/project.yml",
     # multi-LLM adapters
-    "llm", "llm/providers/claude",
+    "llm", "requirements.txt",
     ".claude/skills", ".claude/agents",
     "skills/project-knowledge-manager",
     # knowledge
     "wiki", "entities", "templates", "index", "scripts",
     "framework/concepts", "framework/workflows", "framework/standards",
     "entities/objectives", "entities/subjects", "entities/candidates",
-    "entities/evidence", "entities/evaluations",
+    "entities/evidence", "entities/evaluations", "entities/criteria",
     # data
     "data/raw", "data/manifests", "data/normalized", "data/derived",
-    "data/snapshots", "data/lineage",
+    "data/snapshots", "data/lineage", "data/manifests/datasets",
     # evaluation / governance
-    "evaluation/criteria", "evaluation/scorecards",
+    "evaluation/scorecards", "evaluation/results",
     "evaluation/checklists", "evaluation/quality-gates",
     "governance/adoption/candidates", "governance/adoption/adopted",
     "governance/adoption/rejected",
