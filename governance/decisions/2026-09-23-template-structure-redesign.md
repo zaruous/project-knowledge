@@ -2,7 +2,7 @@
 title: 프로젝트 관리 템플릿 구조 개편 결정
 type: base-decision
 status: accepted
-version: 1.0.0
+version: 1.1.0
 updated_at: 2026-09-23
 decided_at: 2026-09-23
 decided_by:
@@ -15,6 +15,10 @@ inputs:
   - "참고 POC: home_finder_18p_project_2026-09-23.zip (평가형 프로젝트 예시, 구조의 정답 아님)"
   - "Claude-Astra 합의 논의 2라운드"
 changelog:
+  - version: 1.1.0
+    date: 2026-09-23
+    changes:
+      - "GitHub 템플릿 저장소 지정에 따른 조건 추가 (템플릿 전용 경로 정리, main 브랜치 운영)"
   - version: 1.0.0
     date: 2026-09-23
     changes:
@@ -66,6 +70,11 @@ changelog:
     - 모든 어댑터(Claude 스킬, ChatGPT Skill)가 공통 검증기 `_base/scripts/validate.py`를 호출합니다.
 11. **버전의 의미:** 템플릿 README는 base 릴리스 버전, 프로젝트 README는 프로젝트 문서 버전, `_config/project.yml`의 `base.version`은 설치된 base 버전을 나타냅니다. Markdown은 front matter로, YAML은 최상위 메타데이터 키로 버전을 관리합니다.
 12. **실행 순서:** 버그 수정 → 레지스트리 → 물리 분리 → 수락 시험 순서로 진행해 3.0.0으로 배포합니다.
+
+## GitHub 템플릿 저장소 조건 (1.1.0 추가)
+2026-09-23에 원격 저장소 `zaruous/project-knowledge`가 GitHub 템플릿 저장소로 지정되었습니다. 이에 따라 결정 1, 10을 다음 조건으로 구현합니다.
+- "Use this template"은 기본 브랜치의 파일을 모두 복사합니다. 따라서 `governance/`, `_base/self-check/` 같은 템플릿 전용 경로는 복사를 막을 수 없습니다. 새 프로젝트에서 `init_project.py`가 이런 경로를 정리하고 `base.version`을 기록합니다.
+- `main`이 새 프로젝트의 출발점이므로, 단계별 작업은 브랜치에서 진행하고 검증을 통과한 뒤에만 `main`에 합칩니다.
 
 ## 위 결정 중 사용자 확인 항목 (D1~D4)
 

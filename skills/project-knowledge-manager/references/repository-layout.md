@@ -8,7 +8,7 @@
 | `framework/` | domain-neutral concepts, workflows, standards (ID prefixes in `standards/naming.md`) |
 | `wiki/` | approved phase-oriented documentation |
 | `entities/` | atomic traceability records (development + generic evaluation entities) |
-| `data/` | incoming/raw/staging/normalized/derived/snapshots/lineage/sample datasets |
+| `data/` | incoming/raw/staging/normalized/derived/snapshots/lineage datasets and manifests |
 | `attachments/` | PDF, DOCX, XLSX, PPTX, images, drawings, manuals |
 | `scripts/` | ingestion, transform, validation, traceability, reporting, RAG helpers |
 | `llm/` | prompts, context, summaries, generated drafts, evaluation |
@@ -46,7 +46,6 @@ Use these phase groups unless the project has a documented alternative:
 - `derived`: calculations, aggregations, analytical outputs.
 - `snapshots`: point-in-time states; never overwrite, create a new snapshot.
 - `lineage`: input/output/process/checksum records for each transformation.
-- `samples`: safe small subsets for development/tests.
 - `schemas`: machine-readable structure definitions.
 - `manifests`: provenance and governance metadata.
 

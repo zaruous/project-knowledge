@@ -16,7 +16,7 @@ Maintain project knowledge as four coordinated layers: official Wiki, traceable 
 5. Keep large binaries and raw datasets outside Git when practical. Store URI/object key/checksum in manifests.
 6. Preserve source links on generated summaries, reports, test cases, and impact analyses.
 7. Prefer stable IDs over filenames when creating relationships.
-8. Keep shared governance in `AGENTS.md`; use provider adapters such as `CLAUDE.md`, `.claude/`, and `llm/providers/` without duplicating project truth.
+8. Keep shared governance in `AGENTS.md`; use provider adapters such as `CLAUDE.md` (which imports `AGENTS.md`), `.claude/`, and `skills/` without duplicating project truth.
 
 ## Repository workflow
 

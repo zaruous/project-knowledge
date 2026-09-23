@@ -1,33 +1,46 @@
-# Runtime / generated
+# Runtime / secrets
 __pycache__/
 *.pyc
 .venv/
 .env
+.env.*
+!.env.example
+.claude/settings.local.json
 
-# Large or generated data - keep metadata/manifests in Git
-data/incoming/*
-!data/incoming/.gitkeep
-data/raw/**/*
+# 폴더는 추적하고(.gitkeep) 내용물은 제외하는 패턴:
+#   <dir>/**          내용 전체 제외
+#   !<dir>/**/        하위 폴더는 다시 포함 (Git은 제외된 폴더 안의 파일을 되살릴 수 없다)
+#   !<dir>/**/.gitkeep
+
+# Data - manifests/lineage/snapshot 메타데이터는 Git, payload는 외부 저장소
+data/incoming/**
+!data/incoming/**/
+!data/incoming/**/.gitkeep
+data/raw/**
+!data/raw/**/
 !data/raw/**/.gitkeep
-data/staging/*
-!data/staging/.gitkeep
-data/normalized/*
-!data/normalized/.gitkeep
-data/derived/*
-!data/derived/.gitkeep
+data/staging/**
+!data/staging/**/
+!data/staging/**/.gitkeep
+data/normalized/**
+!data/normalized/**/
+!data/normalized/**/.gitkeep
+data/derived/**
+!data/derived/**/
+!data/derived/**/.gitkeep
+data/snapshots/*/payload/
 
 # Attachments may be externalized to MinIO/S3/NAS
-attachments/**/*
+attachments/**
+!attachments/**/
 !attachments/**/.gitkeep
 
 # RAG generated index
-index/chunks/*
-!index/chunks/.gitkeep
-index/embeddings/*
-!index/embeddings/.gitkeep
-index/graph/*
-!index/graph/.gitkeep
+index/**
+!index/**/
+!index/**/.gitkeep
 
 # Outputs
-output/**/*
+output/**
+!output/**/
 !output/**/.gitkeep

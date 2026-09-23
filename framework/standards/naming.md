@@ -34,7 +34,7 @@ ID 접두어의 단일 기준이다. `AGENTS.md`, 템플릿, 스크립트는 이
 | 접두어 | 엔티티 | 형식 | 위치 |
 |---|---|---|---|
 | DEC | Decision | `DEC-####` | `entities/decisions/` |
-| DS | Dataset | `DS-####` | `entities/datasets/`, `data/manifests/datasets.yml` |
+| DS | Dataset | `DS-####` | `data/manifests/datasets/` |
 | SNAP | Snapshot | `SNAP-YYYYMMDD-###` | `data/snapshots/` |
 | LINEAGE | Data Lineage | `LINEAGE-####` | `data/lineage/` |
 | ADOPT | Adoption proposal | `ADOPT-####` | `governance/adoption/` |

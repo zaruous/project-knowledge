@@ -4,7 +4,7 @@
 
 ## 주요 영역
 
-- `bootstrap/`: 프로젝트 초기화
+- `bootstrap/`: 프로젝트 초기화 (`_config/project.yml` 기록, 기존 설정 보존)
 - `ingest/`: 외부 데이터/문서 반입
 - `transform/`: Raw → staging/normalized/derived 변환 (Lineage 기록 포함)
 - `wiki/`: Wiki 문서 관리
@@ -17,11 +17,12 @@
 - `validation/`: 구조/메타데이터 검증
 - `reports/`: 상태/테스트/릴리즈 보고서 생성
 
-Claude Code와 ChatGPT/Codex 모두 같은 스크립트를 호출하도록 유지하고, 모델별 차이는 `.claude/`, `skills/`, `llm/providers/`에 둡니다.
+Claude Code와 ChatGPT/Codex 모두 같은 스크립트를 호출하도록 유지하고, 모델별 차이는 `.claude/`, `skills/`에 둡니다.
 
 ## 기본 검증
 
 ```bash
+pip install -r requirements.txt
 python scripts/validation/validate_structure.py   # 필수 경로, README 버전 front matter, 버전 접미사 파일명 검사
 python scripts/evaluate/self_check_base.py        # 구조 검증 + 핵심 관리 문서 자가점검
 python scripts/traceability/build_trace_matrix.py # 엔티티 ID 추적 매트릭스(CSV)

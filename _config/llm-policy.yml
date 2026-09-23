@@ -3,8 +3,20 @@ llm:
   require_source_links: true
   require_human_approval: true
   allow_direct_raw_ingestion: false
-  preferred_context:
-    - wiki
-    - entities
-    - data/normalized
-    - data/manifests
+  # 컨텍스트 사용 우선순위 (위에서부터). 어떤 단계에서도 비밀값은 넣지 않고,
+  # 근거는 안정 ID와 저장소 경로로 남긴다.
+  context_priority:
+    - path: AGENTS.md
+      note: provider 진입점(CLAUDE.md 등) 포함
+    - path: _config/
+      note: 작업과 관련된 정책
+    - path: wiki/
+      note: 승인된 문서
+    - path: entities/
+    - path: data/manifests/
+    - path: data/normalized/
+      note: 작업에 필요한 범위만 (data/derived/ 포함)
+    - path: data/raw/
+      note: 꼭 필요한 근거만 선택적으로 (attachments/ 포함)
+    - path: llm/generated/
+      note: 초안 참고용. 공식 근거로 사용하지 않는다
