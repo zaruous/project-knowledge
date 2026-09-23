@@ -1,0 +1,17 @@
+name: base-adoption-gate
+rules:
+  - id: reusable
+    description: 패턴이 특정 프로젝트에만 종속되지 않아야 한다.
+    required: true
+  - id: evidence
+    description: 실전 POC에서 문제와 개선 효과가 확인되어야 한다.
+    required: true
+  - id: no-domain-data
+    description: 공통 베이스에 실제 POC 데이터가 포함되지 않아야 한다.
+    required: true
+  - id: traceable-change
+    description: 채용 결정과 변경 파일을 연결할 수 있어야 한다.
+    required: true
+  - id: self-check
+    description: 변경 후 Base Self Check를 통과해야 한다.
+    required: true

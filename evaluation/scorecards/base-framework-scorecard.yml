@@ -1,0 +1,44 @@
+name: base-framework-scorecard
+max_score: 100
+sections:
+  - name: domain_neutrality
+    weight: 10
+    criteria:
+      - generic_structure_only
+      - poc_data_excluded
+  - name: evidence_and_traceability
+    weight: 20
+    criteria:
+      - evidence_linked
+      - source_traceable
+      - decision_traceable
+  - name: data_governance
+    weight: 20
+    criteria:
+      - raw_immutable
+      - lineage_supported
+      - snapshot_supported
+      - integrity_supported
+  - name: evaluation_model
+    weight: 20
+    criteria:
+      - criteria_separated
+      - metrics_separated
+      - confidence_supported
+      - quality_gate_supported
+  - name: lifecycle_and_action
+    weight: 10
+    criteria:
+      - objective_to_action_trace
+      - validation_supported
+  - name: adoption_governance
+    weight: 10
+    criteria:
+      - candidate_review_supported
+      - adopt_reject_recorded
+  - name: automation_and_llm
+    weight: 10
+    criteria:
+      - automated_validation
+      - multi_llm_rules
+pass_score: 85

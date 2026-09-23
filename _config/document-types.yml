@@ -1,0 +1,15 @@
+document_types:
+  - requirement
+  - proposal
+  - architecture
+  - detailed-design
+  - api-spec
+  - interface-spec
+  - test-plan
+  - test-case
+  - test-result
+  - defect
+  - meeting-note
+  - decision
+  - release-note
+  - operation-manual

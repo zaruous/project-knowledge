@@ -1,0 +1,33 @@
+# Runtime / generated
+__pycache__/
+*.pyc
+.venv/
+.env
+
+# Large or generated data - keep metadata/manifests in Git
+data/incoming/*
+!data/incoming/.gitkeep
+data/raw/**/*
+!data/raw/**/.gitkeep
+data/staging/*
+!data/staging/.gitkeep
+data/normalized/*
+!data/normalized/.gitkeep
+data/derived/*
+!data/derived/.gitkeep
+
+# Attachments may be externalized to MinIO/S3/NAS
+attachments/**/*
+!attachments/**/.gitkeep
+
+# RAG generated index
+index/chunks/*
+!index/chunks/.gitkeep
+index/embeddings/*
+!index/embeddings/.gitkeep
+index/graph/*
+!index/graph/.gitkeep
+
+# Outputs
+output/**/*
+!output/**/.gitkeep

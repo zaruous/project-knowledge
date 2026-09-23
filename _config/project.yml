@@ -1,0 +1,13 @@
+project:
+  code: SAMPLE-001
+  name: Sample Project
+  phase: proposal
+  status: active
+  owner: TBD
+
+repository:
+  wiki_root: wiki
+  entity_root: entities
+  data_root: data
+  attachment_root: attachments
+  llm_root: llm

@@ -1,0 +1,3 @@
+interface:
+  display_name: "Project Knowledge Manager"
+  short_description: "Manage project Wiki, traceability, raw data, and LLM/RAG assets"

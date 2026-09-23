@@ -1,0 +1,10 @@
+llm:
+  generated_root: llm/generated
+  require_source_links: true
+  require_human_approval: true
+  allow_direct_raw_ingestion: false
+  preferred_context:
+    - wiki
+    - entities
+    - data/normalized
+    - data/manifests

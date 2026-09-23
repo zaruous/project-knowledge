@@ -1,0 +1,5 @@
+retention:
+  raw_data_default: 3y
+  generated_index: rebuildable
+  approved_wiki: permanent
+  archived_release: permanent

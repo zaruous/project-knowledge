@@ -1,0 +1,8 @@
+classifications:
+  - public
+  - internal
+  - confidential
+rules:
+  raw_default: internal
+  pii_requires_masking: true
+  secrets_in_repository: false
