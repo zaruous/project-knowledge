@@ -1,0 +1,11 @@
+id: MET-0000
+type: metric
+title: 지표 이름
+status: draft
+version: 1.0.0             # 평가(EVAL)가 이 버전을 pinned로 고정한다
+measures: []               # 이 지표로 측정하는 기준 (CRIT)
+unit: ""
+value_type: number         # number | integer | boolean | category
+direction: higher-better   # higher-better | lower-better | target
+method: ""                 # 측정·계산 방법
+updated_at: ""

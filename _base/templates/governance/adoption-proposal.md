@@ -1,5 +1,6 @@
 ---
 id: ADOPT-0000
+type: adoption-proposal
 title: ""
 status: candidate
 source_project: ""

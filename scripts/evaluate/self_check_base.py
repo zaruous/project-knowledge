@@ -9,7 +9,7 @@ checks = []
 proc = subprocess.run(
     [sys.executable, str(ROOT / "scripts/validation/validate_structure.py")],
     capture_output=True,
-    text=True,
+    encoding="utf-8",
 )
 checks.append(("structure", proc.returncode == 0, proc.stdout.strip() or proc.stderr.strip()))
 

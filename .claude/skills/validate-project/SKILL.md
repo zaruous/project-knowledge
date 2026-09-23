@@ -10,6 +10,7 @@ Run:
 ```bash
 python scripts/validation/validate_structure.py
 python scripts/evaluate/self_check_base.py
+python -m unittest discover -s tests
 ```
 
 Then inspect:
@@ -19,7 +20,7 @@ Then inspect:
 - `_config/` policies;
 - `.claude/skills/` and `.claude/agents/` structure;
 - `data/raw/` separation and manifests;
-- entity relationship consistency;
+- registry consistency and entity relationships (reported by the validator from `_base/registry/`);
 - AI drafts remaining under `llm/generated/` until approved.
 
 Report validation failures with exact paths and recommended corrections.

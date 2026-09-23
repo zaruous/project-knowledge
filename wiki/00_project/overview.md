@@ -1,5 +1,4 @@
 ---
-id: PROJECT-OVERVIEW
 type: project-overview
 status: draft
 ---

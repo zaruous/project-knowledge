@@ -1,49 +1,56 @@
 #!/usr/bin/env python3
+"""레코드 추적 매트릭스를 CSV로 출력한다.
+
+CSV는 stdout으로, 커버리지 요약·재평가 필요 목록·검증 오류는 stderr로 나간다.
+관계는 레지스트리(_base/registry/relations.yml)를 따르며 역방향(incoming)은 계산한 값이다.
+검증 오류가 있으면 1로 끝난다.
+"""
+from collections import defaultdict
+import csv
 from pathlib import Path
-import re
+import sys
 
-# ID 접두어 단일 기준: framework/standards/naming.md
-PREFIXES = [
-    "REQ", "DEV", "SCR", "API", "IF", "DB", "TC", "BUG", "CR",
-    "OBJ", "SUBJ", "CAND", "EVD", "CRIT", "MET", "EVAL", "ACT",
-    "DEC", "DS",
-]
-ID_RE = re.compile(rf"^({'|'.join(PREFIXES)})-\d{{4}}$")
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "lib"))
+import knowledge  # noqa: E402
 
 
-def top_level_keys(block: str):
-    data = {}
-    for line in block.splitlines():
-        if ":" in line and not line.startswith((" ", "-", "#")):
-            k, v = line.split(":", 1)
-            data[k.strip()] = v.strip()
-    return data
-
-
-def parse_metadata(path: Path):
-    text = path.read_text(encoding="utf-8", errors="ignore").replace("\r\n", "\n")
-    if path.suffix in (".yml", ".yaml"):
-        return top_level_keys(text)
-    if not text.startswith("---\n"):
-        return None
-    end = text.find("\n---\n", 4)
-    if end < 0:
-        return None
-    return top_level_keys(text[4:end])
+def note(text):
+    print(f"# {text}", file=sys.stderr)
 
 
 def main():
-    root = Path("entities")
-    rows = []
-    for path in root.rglob("*"):
-        if path.suffix not in (".md", ".yml", ".yaml"):
-            continue
-        meta = parse_metadata(path)
-        if meta and ID_RE.match(meta.get("id", "")):
-            rows.append((meta.get("id"), meta.get("type", ""), meta.get("status", ""), str(path)))
-    print("id,type,status,path")
-    for row in sorted(rows):
-        print(",".join(row))
+    knowledge.utf8_stdio()
+    root = Path(sys.argv[1]) if len(sys.argv) > 1 else knowledge.ROOT
+    res = knowledge.validate(root)
+
+    outgoing = defaultdict(list)
+    for src, name, tgt in res.edges:
+        outgoing[src.key].append(f"{name}={tgt.id}")
+    writer = csv.writer(sys.stdout, lineterminator="\n")
+    writer.writerow(["id", "type", "status", "path", "outgoing", "incoming"])
+    for r in sorted((r for r in res.records if r.id), key=lambda r: r.id):
+        incoming = [f"{inv}={key}" for inv, keys in sorted(res.inverse[r.id].items()) for key in keys]
+        writer.writerow([r.id, r.type, r.meta.get("status", ""), r.path.as_posix(),
+                         ";".join(outgoing[r.key]), ";".join(incoming)])
+
+    reqs = [r for r in res.records if r.type == "requirement"]
+    if reqs:
+        implemented = [r for r in reqs if res.inverse[r.id]["implemented_by"]]
+        verified = [r for r in reqs if res.inverse[r.id]["verified_by"] or any(
+            res.inverse[dev]["verified_by"] for dev in res.inverse[r.id]["implemented_by"])]
+        note(f"REQ → DEV 구현 {len(implemented)}/{len(reqs)}, REQ → TC 검증(기능 경유 포함) {len(verified)}/{len(reqs)}")
+    for ev in (r for r in res.records if r.type == "evaluation"):
+        for ref, pinned in (ev.meta.get("pinned") or {}).items():
+            current = res.by_id.get(ref)
+            if current and str(current.meta.get("version")) != str(pinned):
+                note(f"재평가 필요: {ev.id}는 {ref} {pinned}을 썼지만 현재 {current.meta.get('version')}")
+    for w in res.warnings:
+        note(f"WARN {w}")
+    for e in res.errors:
+        note(f"ERROR {e}")
+    if res.errors:
+        raise SystemExit(1)
+
 
 if __name__ == "__main__":
     main()

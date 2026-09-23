@@ -13,25 +13,28 @@ status: draft
 ---
 ```
 
-Add relationship arrays only when relevant, for example:
+Record each relationship once, on the source record, as a list of IDs. Inverse links are computed by scripts. For example, a feature and a test case:
 
 ```yaml
-related_features:
-  - DEV-0012
-related_tests:
-  - TC-0021
-source:
-  - ../../wiki/01_proposal/rfp/customer-rfp.md
+# entities/features/DEV-0012.md
+implements: [REQ-0001]
+uses: [API-0007]
+# entities/test-cases/TC-0021.md
+verifies: [DEV-0012]
 ```
+
+Relation names and allowed types come from `_base/registry/relations.yml` when present.
 
 ## Dataset manifest
 
 Recommended fields:
 
 ```yaml
-dataset_id: DS-0001
+id: DS-0001
+type: dataset
 name: Equipment production result
-type: equipment_log
+status: active
+kind: equipment_log
 source:
   system: SAMPLE_SYSTEM
   interface: RS232
@@ -43,14 +46,12 @@ format: csv
 schema:
   file: data/schemas/equipment.schema.json
 retention:
-  period: 3y
+  policy: raw_data_default
 security:
   classification: internal
 processing:
   parser: scripts/transform/normalize_logs.py
-related:
-  requirements: [REQ-0001]
-  interfaces: [IF-0003]
+supports: [REQ-0001, IF-0003]
 ```
 
 ## AI-generated content

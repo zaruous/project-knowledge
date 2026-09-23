@@ -2,14 +2,11 @@
 id: REQ-0000
 type: requirement
 title: 요구사항 제목
-phase: preparation
 status: draft
-priority: medium
+priority: medium      # high | medium | low
 owner: TBD
-related_features: []
-related_tests: []
-source: []
-tags: []
+source: []            # 근거 문서 경로·첨부 (예: wiki/01_proposal/rfp/고객-RFP.md)
+updated_at: ""
 ---
 
 # REQ-0000 요구사항 제목
@@ -19,5 +16,3 @@ tags: []
 ## 배경
 
 ## 완료 조건
-
-## 관련 문서

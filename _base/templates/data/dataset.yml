@@ -1,0 +1,21 @@
+id: DS-0000
+type: dataset
+name: 데이터셋 이름
+status: active
+kind: unknown              # 데이터 종류 (예: equipment_log, transaction)
+source:
+  system: TBD
+  interface: TBD
+location:
+  storage: local           # local | minio | s3 | nas
+  path: data/raw/
+format: csv
+schema:
+  file: data/schemas/example.schema.json
+security:
+  classification: internal # _config/security-policy.yml 기준
+retention:
+  policy: raw_data_default # _config/retention-policy.yml 키
+processing:
+  parser: TBD
+supports: []               # 이 데이터가 뒷받침하는 REQ/DEV/IF/DB/OBJ

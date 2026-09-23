@@ -2,9 +2,23 @@
 title: Project Knowledge Repository
 type: repository-guide
 status: active
-version: 3.0.0-alpha.1
+version: 3.0.0-alpha.2
 updated_at: 2026-09-23
 changelog:
+  - version: 3.0.0-alpha.2
+    date: 2026-09-23
+    summary: 3.0.0 2단계 - 레지스트리, 유형별 템플릿, 레지스트리 기반 검증
+    decision: governance/decisions/2026-09-23-template-structure-redesign.md
+    changes:
+      - "`_base/registry/`에 유형(`types.yml`), 상태(`status-sets.yml`), 관계(`relations.yml`) 레지스트리 추가. `_config/document-types.yml`, `status-codes.yml` 삭제"
+      - "신규 ID ISS(이슈), RISK(리스크), DLV(승인 산출물), EVM(평가 모델)과 저장 위치 추가"
+      - "템플릿을 `_base/templates/`로 옮기고 27종으로 확장 (공용 design-object·candidate, wiki 4종, AI 초안). 루트 `templates/`는 프로젝트 전용"
+      - "관계 필드 표준화: 출발 레코드에만 기록하고 역방향은 계산. `related_features`, `related_tests`, `subject_id` 등 폐지"
+      - "`scripts/lib/knowledge.py`: ID·파일명·위치·상태·결과값·관계·누락 규칙·확장 덮어쓰기·템플릿 정합성 검증"
+      - "`build_trace_matrix.py`: 관계와 역방향 CSV, 커버리지 요약, 평가 정의 버전이 바뀌면 재평가 필요 보고"
+      - "`tests/integration/test_registry.py`: 올바른 체인 통과, 잘못된 레코드 실패를 확인하는 수락 시험"
+      - "`_config/types.yml`: 프로젝트 전용 유형 확장 파일"
+      - "AGENTS.md의 공식 기록 위치를 레지스트리 기준으로 변경"
   - version: 3.0.0-alpha.1
     date: 2026-09-23
     summary: 3.0.0 1단계 - 버그 수정과 중복 경로 정리 (구조 유지)
@@ -93,10 +107,10 @@ Wiki 기반 프로젝트 산출물, 엔티티 추적성, Raw Data, 평가·의�
 | 관리 포인트 | 의미 | 정의 문서 |
 |---|---|---|
 | Evidence | 평가 근거와 출처 | `framework/concepts/evidence-model.md` |
-| Snapshot | 시점별 상태 보존 | `framework/workflows/monitor.md`, `templates/snapshot.yml` |
+| Snapshot | 시점별 상태 보존 | `framework/workflows/monitor.md`, `_base/templates/data/snapshot.yml` |
 | Confidence | 근거 신뢰도와 평가 점수의 분리 | `framework/concepts/evaluation-model.md` |
-| Evaluation | Criterion/Metric/Weight/Score/Gate | `framework/concepts/evaluation-model.md`, `evaluation/` |
-| Data Lineage | Raw에서 Derived까지의 변환 추적 | `framework/workflows/normalize.md`, `templates/lineage.yml` |
+| Evaluation | Criterion/Metric/Weight/Score/Gate | `framework/concepts/evaluation-model.md`, `evaluation/models/` |
+| Data Lineage | Raw에서 Derived까지의 변환 추적 | `framework/workflows/normalize.md`, `_base/templates/data/lineage.yml` |
 | Adoption Governance | POC 아이디어의 공통 베이스 채용/기각 기록 | `governance/adoption/README.md` |
 | Self Check | 구조와 정책의 자동 자가점검 | `evaluation/checklists/base-framework-self-check.md`, `scripts/evaluate/self_check_base.py` |
 
@@ -111,18 +125,19 @@ Wiki 기반 프로젝트 산출물, 엔티티 추적성, Raw Data, 평가·의�
 
 ```text
 project-knowledge/
-├─ _config/        # 프로젝트, 문서 유형, 상태, LLM, 보존 및 보안 정책
+├─ _base/          # 템플릿 엔진: registry(유형·상태·관계), templates(유형별 템플릿)
+├─ _config/        # 프로젝트 설정, 프로젝트 전용 유형(types.yml), LLM·보존·보안 정책
 ├─ framework/      # 범용 개념(concepts) / 워크플로(workflows) / 표준(standards)
 ├─ wiki/           # 프로젝트 단계별 공식 문서 (00_project ~ 09_operation)
 ├─ entities/       # 추적성 원자 엔티티 (개발 엔티티 + 범용 평가 엔티티)
 ├─ data/           # incoming/raw/staging/normalized/derived + snapshots/lineage/manifests/schemas
 ├─ attachments/    # PDF, DOCX, XLSX, 이미지 등 원본 첨부물
-├─ evaluation/     # 재사용 평가 규칙(scorecards/checklists/quality-gates)과 계산 결과(results)
+├─ evaluation/     # 평가 모델(models), 계산 결과(results), 템플릿 자체 점검(scorecards/checklists/quality-gates)
 ├─ governance/     # 베이스 자체의 운영 기록 (adoption/decisions/changes/retrospectives)
 ├─ scripts/        # 초기화, 수집, 변환, 평가, 검증, 추적성, 모니터링, 보고, RAG 자동화
 ├─ llm/            # 공통 컨텍스트, 프롬프트, AI 생성물, LLM 평가
 ├─ index/          # chunk, metadata, embedding, graph
-├─ templates/      # 표준 문서/메타데이터 템플릿
+├─ templates/      # 프로젝트 전용 템플릿 (base 템플릿은 _base/templates/)
 ├─ tests/          # fixtures/integration
 ├─ output/         # 자동 생성 결과물
 ├─ archive/        # 과거 문서, 데이터셋, 릴리즈
@@ -141,10 +156,11 @@ project-knowledge/
 | `governance/decisions/` | 공통 베이스(템플릿) 자체의 구조·정책 결정 |
 | `entities/criteria/`, `entities/metrics/` | 평가 기준·지표 정의 (`CRIT-####`, `MET-####`) |
 | `entities/evaluations/` | 평가 실행 기록 (`EVAL-####`) |
-| `evaluation/` | 재사용 평가 규칙 세트(scorecards, quality-gates, checklists)와 계산 결과(results) |
+| `evaluation/models/` | 평가 모델 (`EVM-####`). 기준·지표를 참조해 가중치·필터·공식으로 조합 |
+| `evaluation/` 나머지 | 계산 결과(results)와 템플릿 자체 점검(scorecards, quality-gates, checklists) |
 | `data/manifests/datasets/` | 데이터셋 기록 (`DS-####`). 이 한 곳에서만 관리 |
 
-ID 접두어와 저장 위치의 전체 매핑은 `framework/standards/naming.md`를 따릅니다.
+유형·ID 접두어·저장 위치·상태·관계의 원천은 `_base/registry/`입니다. 설명은 `framework/standards/`에 있습니다.
 
 ## 데이터 흐름
 
@@ -160,6 +176,7 @@ python scripts/bootstrap/init_project.py --name "MES 구축" --code MES-001 --dr
 python scripts/bootstrap/init_project.py --name "MES 구축" --code MES-001
 python scripts/validation/validate_structure.py
 python scripts/evaluate/self_check_base.py
+python -m unittest discover -s tests
 ```
 
 bash와 PowerShell에서 같은 명령을 사용합니다. `init_project.py`는 `_config/project.yml`의 다른 설정을 보존하므로 다시 실행해도 안전합니다.

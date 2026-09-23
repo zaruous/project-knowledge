@@ -11,7 +11,7 @@
 | Release | `wiki/08_release/` |
 | Operation | `wiki/09_operation/` |
 
-단계와 무관하게 전 기간에 걸쳐 관리하는 영역: `wiki/00_project/`(개요/용어), `wiki/05_change/`(변경), `wiki/06_issue-risk/`(이슈/리스크), `wiki/07_meeting/`(회의).
+단계와 무관하게 전 기간에 걸쳐 관리하는 영역: `wiki/00_project/`(개요/용어), `wiki/05_change/`(변경 영향 분석), `wiki/06_issue-risk/`(이슈/리스크 문서), `wiki/07_meeting/`(회의). 이슈·리스크·변경 요청·결정 자체는 엔티티(ISS, RISK, CR, DEC)로 관리한다.
 
 평가 중심 프로젝트에서는 별도의 범용 판단 흐름을 병행한다.
 

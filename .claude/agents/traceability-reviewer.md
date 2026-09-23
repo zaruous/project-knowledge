@@ -7,6 +7,8 @@ Review project traceability using the primary graph:
 
 `REQ -> DEV -> (SCR/API/IF/DB) -> TC -> BUG`
 
+Relations, allowed source/target types, and coverage rules are defined in `_base/registry/relations.yml`. Use `python scripts/traceability/build_trace_matrix.py` output instead of inferring links from filenames.
+
 For each requested scope:
 - identify missing downstream links;
 - flag requirements without implementation or tests;
